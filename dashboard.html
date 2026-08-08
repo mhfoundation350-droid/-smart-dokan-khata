@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart Dokan Khata</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    *{box-sizing:border-box;}
+    body{font-family: 'SolaimanLipi', Arial; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin:0; padding:15px; min-height:100vh;}
+    
+    .container{max-width:600px; margin:auto;}
+    
+    .header{display:flex; align-items:center; background:white; padding:15px; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.2); margin-bottom:20px;}
+    .header img{width:50px; margin-right:10px;}
+    .header h2{margin:0; color:#667eea; font-size:18px; flex:1;}
+    .header button{background:#ff4757; color:white; border:none; padding:8px 15px; border-radius:8px; cursor:pointer;}
+    
+    .card{background:white; padding:20px; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.15); margin-bottom:20px;}
+    .card h3{margin-top:0; color:#333; border-bottom:2px solid #667eea; padding-bottom:10px;}
+    
+    input, select{width:100%; padding:12px; margin:8px 0; border:2px solid #ddd; border-radius:8px; font-size:16px;}
+    input:focus{border-color:#667eea; outline:none;}
+    
+    .btn-group{display:flex; gap:10px;}
+    .btn{flex:1; padding:12px; border:none; border-radius:8px; cursor:pointer; font-size:16px; font-weight:bold;}
+    .btn-baki{background:#ff6b6b; color:white;}
+    .btn-joma{background:#1dd1a1; color:white;}
+    .btn-add{background:#667eea; color:white;}
+    
+    .summary{display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:center;}
+    .summary-box{background:#f1f2f6; padding:15px; border-radius:10px;}
+    .summary-box h4{margin:5px 0; color:#666; font-size:14px;}
+    .summary-box p{margin:5px 0; font-size:22px; font-weight:bold; color:#667eea;}
+    
+    .customer-list .customer{display:flex; justify-content:space-between; align-items:center; background:#f1f2f6; padding:12px; border-radius:10px; margin:8px 0; gap:10px;}
+    .customer-info b{color:#333;}
+    .customer-info small{color:#666;}
+    .customer-balance{font-weight:bold; font-size:18px;}
+    .balance-due{color:#ff4757;}
+    .balance-clear{color:#1dd1a1;}
+    
+    .icon-group{display:flex; gap:8px;}
+    .icon-btn{background:white; padding:8px; border-radius:50%; text-decoration:none; display:flex; align-items:center; justify-content:center; width:36px; height:36px; box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+    .icon-btn:hover{background:#eee;}
+    .icon-btn svg{width:20px; height:20px;}
+  </style>
+</head>
+<body>
+
+<div class="container">
+  
+  <div class="header">
+    <img src="logo.png" alt="Logo">
+    <h2 id="shopName">আমার দোকান</h2>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <div class="card">
+    <h3>দোকানের সেটিং</h3>
+    <input type="text" id="shopNameInput" placeholder="আপনার দোকানের নাম লিখুন">
+    <button class="btn btn-add" onclick="saveShopName()">নাম সেভ করুন</button>
+  </div>
+
+  <div class="card">
+    <h3>নতুন কাস্টমার এড</h3>
+    <input type="text" id="custName" placeholder="কাস্টমারের নাম">
+    <input type="tel" id="custPhone" placeholder="মোবাইল নাম্বার 01XXXXXXXXX">
+    <button class="btn btn-add" onclick="addCustomer()">কাস্টমার এড করুন</button>
+  </div>
+
+  <div class="card">
+    <h3>নতুন লেনদেন</h3>
+    <select id="custSelect"><option>কাস্টমার সিলেক্ট করুন</option></select>
+    <input type="number" id="amount" placeholder="টাকার পরিমাণ">
+    <div class="btn-group">
+      <button class="btn btn-baki" onclick="addTransaction('baki')">বাকি +</button>
+      <button class="btn btn-joma" onclick="addTransaction('joma')">জমা -</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>মোট হিসাব</h3>
+    <div class="summary">
+      <div class="summary-box">
+        <h4>মোট বাকি</h4>
+        <p id="totalBaki">0 টাকা</p>
+      </div>
+      <div class="summary-box">
+        <h4>মোট জমা</h4>
+        <p id="totalJoma">0 টাকা</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>সকল কাস্টমার</h3>
+    <div id="customerList" class="customer-list">কোনো কাস্টমার নাই</div>
+  </div>
+
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, collection, addDoc, getDocs, query, where, doc, setDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBdbroawwWdIX6CgQJFFv4Kk3oXAgnc_ak",
+    authDomain: "smart-dokan-khata.firebaseapp.com",
+    projectId: "smart-dokan-khata",
+    storageBucket: "smart-dokan-khata.firebasestorage.app",
+    messagingSenderId: "941938264732",
+    appId: "1:941938264732:web:6f1ddb88c0d8df480dfb59"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  let userId = null;
+  let customers = [];
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      userId = user.uid;
+      loadData();
+    } else {
+      window.location.href = "index.html";
+    }
+  });
+
+  window.logout = () => signOut(auth);
+
+  window.saveShopName = async () => {
+    const name = document.getElementById('shopNameInput').value;
+    if(!name) return alert("দোকানের নাম লিখুন");
+    await setDoc(doc(db, "shops", userId), {name: name});
+    document.getElementById('shopName').innerText = name;
+    alert("দোকানের নাম সেভ হয়েছে");
+  }
+
+  window.addCustomer = async () => {
+    const name = document.getElementById('custName').value;
+    const phone = document.getElementById('custPhone').value;
+    if(!name || !phone) return alert("নাম ও নাম্বার দিন");
+    await addDoc(collection(db, "customers"), {userId, name, phone, balance: 0});
+    document.getElementById('custName').value = "";
+    document.getElementById('custPhone').value = "";
+    loadData();
+  }
+
+  window.addTransaction = async (type) => {
+    const custId = document.getElementById('custSelect').value;
+    const amount = Number(document.getElementById('amount').value);
+    if(custId === "কাস্টমার সিলেক্ট করুন" || !amount) return alert("কাস্টমার ও টাকা সিলেক্ট করুন");
+    
+    await addDoc(collection(db, "transactions"), {userId, custId, amount, type, date: new Date()});
+    
+    const custRef = doc(db, "customers", custId);
+    const custSnap = await getDoc(custRef);
+    let newBalance = custSnap.data().balance;
+    if(type === 'baki') newBalance += amount;
+    else newBalance -= amount;
+    await updateDoc(custRef, {balance: newBalance});
+    
+    document.getElementById('amount').value = "";
+    loadData();
+  }
+
+  async function loadData() {
+    const shopSnap = await getDoc(doc(db, "shops", userId));
+    if(shopSnap.exists()) document.getElementById('shopName').innerText = shopSnap.data().name;
+
+    const custQuery = query(collection(db, "customers"), where("userId", "==", userId));
+    const custSnap = await getDocs(custQuery);
+    customers = [];
+    const select = document.getElementById('custSelect');
+    const list = document.getElementById('customerList');
+    select.innerHTML = "<option>কাস্টমার সিলেক্ট করুন</option>";
+    list.innerHTML = "";
+    let totalBaki = 0;
+
+    custSnap.forEach(doc => {
+      const c = {id: doc.id, ...doc.data()};
+      customers.push(c);
+      select.innerHTML += `<option value="${c.id}">${c.name} - ${c.phone}</option>`;
+      
+      const balanceClass = c.balance > 0 ? 'balance-due' : 'balance-clear';
+      
+      // FIX: নাম্বার থেকে সব স্পেস - + বাদ দিয়ে 0 থাকলে 88 বসানো
+      let cleanNumber = c.phone.replace(/\D/g, ''); // 01645-444350 -> 01645444350
+      if(cleanNumber.startsWith('0')) {
+        cleanNumber = '88' + cleanNumber.substring(1); // 016... -> 88016...
+      } else if(!cleanNumber.startsWith('88')) {
+        cleanNumber = '88' + cleanNumber; // 164... -> 88164...
+      }
+      
+      list.innerHTML += `
+        <div class="customer">
+          <div class="customer-info">
+            <b>${c.name}</b><br>
+            <small>${c.phone}</small>
+          </div>
+          
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="icon-group">
+              <a href="tel:${c.phone}" class="icon-btn">
+                <svg viewBox="0 0 24 24" fill="#4CAF50"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+              </a>
+              <a href="https://wa.me/${cleanNumber}" target="_blank" class="icon-btn">
+                <svg viewBox="0 0 32 32" fill="#25D366"><path d="M16.004 3.626c-7.372 0-13.375 5.996-13.375 13.373 0 2.354.614 4.648 1.781 6.673L3.006 30.47l6.887-1.802a13.37 13.37 0 0 0 6.111 1.555c7.372 0 13.375-5.996 13.375-13.373S23.376 3.626 16.004 3.626zm5.954 16.22c-.262.73-1.514 1.4-2.055 1.49-.517.09-1.172.13-1.89-.12-.434-.148-.99-.342-1.702-.672-3.01-1.433-4.972-4.778-5.12-4.997-.147-.219-1.209-1.605-1.209-3.061s.758-2.165 1.028-2.461c.27-.298.59-.378.788-.378.176 0 .354.01.51.015.164.004.384-.06.6.46.255.646.873 2.247.95 2.408.076.161.127.349.025.556-.101.208-.152.337-.297.516-.147.18-.31.402-.442.54-.147.165-.301.345-.13.675.17.33.756 1.245 1.623 2.015 1.12 1.004 2.06 1.315 2.352 1.462.29.148.46.123.63-.074.17-.196.73-.852.926-1.145.196-.293.39-.246.655-.146.266.101 1.694.799 1.984.945.29.146.484.219.558.34.074.12.074.7-.18 1.43z"/></svg>
+              </a>
+            </div>
+            <div class="customer-balance ${balanceClass}">${c.balance} টাকা</div>
+          </div>
+        </div>
+      `;
+      if(c.balance > 0) totalBaki += c.balance;
+    });
+    if(list.innerHTML === "") list.innerHTML = "কোনো কাস্টমার নাই";
+
+    const transQuery = query(collection(db, "transactions"), where("userId", "==", userId));
+    const transSnap = await getDocs(transQuery);
+    let totalJoma = 0;
+    transSnap.forEach(doc => {
+      if(doc.data().type === 'joma') totalJoma += doc.data().amount;
+    });
+
+    document.getElementById('totalBaki').innerText = totalBaki + " টাকা";
+    document.getElementById('totalJoma').innerText = totalJoma + " টাকা";
+  }
+</script>
+
+</body>
+</html>
