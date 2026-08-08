@@ -25,9 +25,9 @@
     .btn-baki{background:#ff6b6b; color:white;}
     .btn-joma{background:#1dd1a1; color:white;}
     .btn-add{background:#667eea; color:white;}
-    .btn-confirm{background:#3742fa; color:white; width:100%; margin-top:10px;} /* নতুন কনফার্ম বাটন */
+    .btn-confirm{background:#3742fa; color:white; width:100%; margin-top:10px;}
     .btn-select{border:3px solid transparent;}
-    .btn-select.active{border-color:#333;} /* কোনটা সিলেক্ট হলো বুঝার জন্য */
+    .btn-select.active{border-color:#333;}
     
     .summary{display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:center;}
     .summary-box{background:#f1f2f6; padding:15px; border-radius:10px;}
@@ -41,10 +41,11 @@
     .balance-due{color:#ff4757;}
     .balance-clear{color:#1dd1a1;}
     
-    .icon-group{display:flex; gap:8px;}
-    .icon-btn{background:white; padding:8px; border-radius:50%; text-decoration:none; display:flex; align-items:center; justify-content:center; width:36px; height:36px; box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+    .icon-group{display:flex; gap:6px;}
+    .icon-btn{background:white; padding:8px; border-radius:50%; text-decoration:none; display:flex; align-items:center; justify-content:center; width:34px; height:34px; box-shadow:0 2px 5px rgba(0,0,0,0.1); border:none; cursor:pointer;}
     .icon-btn:hover{background:#eee;}
-    .icon-btn svg{width:20px; height:20px;}
+    .icon-btn svg{width:18px; height:18px;}
+    .icon-delete svg{fill:#ff4757;} /* ডিলেট লাল */
     
     .search-box{position:relative; margin-bottom:15px;}
     .search-box input{padding-left:40px;}
@@ -74,7 +75,6 @@
     <button class="btn btn-add" onclick="addCustomer()">কাস্টমার এড করুন</button>
   </div>
 
-  <!-- নতুন লেনদেন - কনফার্ম সিস্টেম -->
   <div class="card">
     <h3>নতুন লেনদেন</h3>
     <select id="custSelect"><option>কাস্টমার সিলেক্ট করুন</option></select>
@@ -114,7 +114,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, query, where, doc, setDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, query, where, doc, setDoc, updateDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBdbroawwWdIX6CgQJFFv4Kk3oXAgnc_ak",
@@ -130,7 +130,7 @@
   const db = getFirestore(app);
   let userId = null;
   let customers = [];
-  let selectedType = null; // নতুন: কোনটা সিলেক্ট হইছে
+  let selectedType = null;
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -161,7 +161,6 @@
     loadData();
   }
 
-  // 1. আগে টাইপ সিলেক্ট করবে
   window.selectType = (type) => {
     selectedType = type;
     document.getElementById('btnBaki').classList.remove('active');
@@ -170,7 +169,6 @@
     else document.getElementById('btnJoma').classList.add('active');
   }
 
-  // 2. তারপর কনফার্ম করবে
   window.confirmTransaction = async () => {
     const custId = document.getElementById('custSelect').value;
     const amount = Number(document.getElementById('amount').value);
@@ -189,11 +187,20 @@
     await updateDoc(custRef, {balance: newBalance});
     
     document.getElementById('amount').value = "";
-    selectedType = null; // রিসেট
+    selectedType = null;
     document.getElementById('btnBaki').classList.remove('active');
     document.getElementById('btnJoma').classList.remove('active');
     alert("লেনদেন সেভ হয়েছে ✅");
     loadData();
+  }
+
+  // নতুন ডিলেট ফাংশন
+  window.deleteCustomer = async (custId, custName) => {
+    if(confirm(`আপনি কি "${custName}" কে ডিলেট করতে চান? \nএই কাস্টমারের সব লেনদেনও ডিলেট হবে না।`)){
+      await deleteDoc(doc(db, "customers", custId));
+      alert("কাস্টমার ডিলেট হয়েছে");
+      loadData();
+    }
   }
 
   window.searchCustomer = () => {
@@ -229,7 +236,7 @@
             <small>${c.phone}</small>
           </div>
           
-          <div style="display:flex; align-items:center; gap:10px;">
+          <div style="display:flex; align-items:center; gap:8px;">
             <div class="icon-group">
               <a href="tel:${c.phone}" class="icon-btn">
                 <svg viewBox="0 0 24 24" fill="#4CAF50"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
@@ -237,6 +244,10 @@
               <a href="https://wa.me/${cleanNumber}" target="_blank" class="icon-btn">
                 <svg viewBox="0 0 32 32" fill="#25D366"><path d="M16.004 3.626c-7.372 0-13.375 5.996-13.375 13.373 0 2.354.614 4.648 1.781 6.673L3.006 30.47l6.887-1.802a13.37 13.37 0 0 0 6.111 1.555c7.372 0 13.375-5.996 13.375-13.373S23.376 3.626 16.004 3.626zm5.954 16.22c-.262.73-1.514 1.4-2.055 1.49-.517.09-1.172.13-1.89-.12-.434-.148-.99-.342-1.702-.672-3.01-1.433-4.972-4.778-5.12-4.997-.147-.219-1.209-1.605-1.209-3.061s.758-2.165 1.028-2.461c.27-.298.59-.378.788-.378.176 0 .354.01.51.015.164.004.384-.06.6.46.255.646.873 2.247.95 2.408.076.161.127.349.025.556-.101.208-.152.337-.297.516-.147.18-.31.402-.442.54-.147.165-.301.345-.13.675.17.33.756 1.245 1.623 2.015 1.12 1.004 2.06 1.315 2.352 1.462.29.148.46.123.63-.074.17-.196.73-.852.926-1.145.196-.293.39-.246.655-.146.266.101 1.694.799 1.984.945.29.146.484.219.558.34.074.12.074.7-.18 1.43z"/></svg>
               </a>
+              <!-- ডিলেট বাটন -->
+              <button onclick="deleteCustomer('${c.id}', '${c.name}')" class="icon-btn icon-delete">
+                <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+              </button>
             </div>
             <div class="customer-balance ${balanceClass}">${c.balance} টাকা</div>
           </div>
