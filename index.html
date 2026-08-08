@@ -1,49 +1,61 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Dokan Khata</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Smart Dokan Khata - Login</title>
+  <style>
+    body{font-family: Arial; display:flex; justify-content:center; align-items:center; height:100vh; background:#f2f2f2;}
+    .box{background:white; padding:30px; border-radius:10px; box-shadow:0 0 10px #ccc; width:300px;}
+    input{width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:5px;}
+    button{width:100%; padding:10px; background:#4CAF50; color:white; border:none; border-radius:5px; cursor:pointer;}
+    button:hover{background:#45a049;}
+  </style>
 </head>
 <body>
-  <div id="login-page" class="container">
-    <h1>স্মার্ট দোকান খাতা</h1>
-    <input type="tel" id="phone-number" placeholder="01XXXXXXXXX">
-    <button id="send-otp">OTP পাঠান</button>
-    <input type="text" id="otp-code" placeholder="OTP কোড">
-    <button id="verify-otp">Login করুন</button>
-    <div id="recaptcha-container"></div>
-  </div>
 
-  <div id="app-page" class="container" style="display:none;">
-    <h2>ক্রেতার হিসাব</h2>
-    <input type="text" id="customer-name" placeholder="ক্রেতার নাম">
-    <input type="number" id="customer-amount" placeholder="টাকার পরিমাণ">
-    <button id="add-customer">যোগ করুন</button>
-    <ul id="customer-list"></ul>
-    <button id="logout">Logout</button>
-  </div>
+<div class="box">
+  <h2>Smart Dokan Khata</h2>
+  <input type="email" id="email" placeholder="ইমেইল দিন">
+  <input type="password" id="password" placeholder="পাসওয়ার্ড দিন">
+  <button onclick="register()">নতুন একাউন্ট</button>
+  <button onclick="login()">লগইন</button>
+  <p id="msg"></p>
+</div>
 
-  <!-- 1. Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-  
-  <!-- 2. আপনার Firebase Config - এখানে বসবে -->
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBdbroawwWdIX6CgQJFFv4Kk3oXAgnc_ak",
-      authDomain: "smart-dokan-khata.firebaseapp.com",
-      projectId: "smart-dokan-khata",
-      storageBucket: "smart-dokan-khata.firebasestorage.app",
-      messagingSenderId: "941938264732",
-      appId: "1:941938264732:web:6f1ddb88c0d8df480dfb59"
-    };
-    firebase.initializeApp(firebaseConfig);
-  </script>
+<script type="module">
+  // 1. আপনার Config
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  <!-- 3. আপনার কোড -->
-  <script src="app.js"></script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBdbroawwWdIX6CgQJFFv4Kk3oXAgnc_ak",
+    authDomain: "smart-dokan-khata.firebaseapp.com",
+    projectId: "smart-dokan-khata",
+    storageBucket: "smart-dokan-khata.firebasestorage.app",
+    messagingSenderId: "941938264732",
+    appId: "1:941938264732:web:6f1ddb88c0d8df480dfb59"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // 2. রেজিস্টার ফাংশন
+  window.register = () => {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(() => document.getElementById('msg').innerText = "একাউন্ট হয়ে গেছে!")
+      .catch((error) => document.getElementById('msg').innerText = error.message);
+  }
+
+  // 3. লগইন ফাংশন
+  window.login = () => {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => document.getElementById('msg').innerText = "লগইন সফল!")
+      .catch((error) => document.getElementById('msg').innerText = error.message);
+  }
+</script>
+
 </body>
 </html>
