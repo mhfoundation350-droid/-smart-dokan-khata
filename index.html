@@ -25,9 +25,25 @@
     <button id="logout">Logout</button>
   </div>
 
+  <!-- 1. Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  
+  <!-- 2. আপনার Firebase Config - এখানে বসবে -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBdbroawwWdIX6CgQJFFv4Kk3oXAgnc_ak",
+      authDomain: "smart-dokan-khata.firebaseapp.com",
+      projectId: "smart-dokan-khata",
+      storageBucket: "smart-dokan-khata.firebasestorage.app",
+      messagingSenderId: "941938264732",
+      appId: "1:941938264732:web:6f1ddb88c0d8df480dfb59"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
+  <!-- 3. আপনার কোড -->
   <script src="app.js"></script>
 </body>
 </html>
