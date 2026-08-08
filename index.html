@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Dokan Khata</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="login-page" class="container">
+    <h1>স্মার্ট দোকান খাতা</h1>
+    <input type="tel" id="phone-number" placeholder="01XXXXXXXXX">
+    <button id="send-otp">OTP পাঠান</button>
+    <input type="text" id="otp-code" placeholder="OTP কোড">
+    <button id="verify-otp">Login করুন</button>
+    <div id="recaptcha-container"></div>
+  </div>
+
+  <div id="app-page" class="container" style="display:none;">
+    <h2>ক্রেতার হিসাব</h2>
+    <input type="text" id="customer-name" placeholder="ক্রেতার নাম">
+    <input type="number" id="customer-amount" placeholder="টাকার পরিমাণ">
+    <button id="add-customer">যোগ করুন</button>
+    <ul id="customer-list"></ul>
+    <button id="logout">Logout</button>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
