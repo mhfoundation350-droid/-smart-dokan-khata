@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>ঘরের বাজার - স্মার্ট খাতা</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{ --primary:#FF6B35; --secondary:#004E64; --bg:#FFF8F0; --card:#FFFFFF; }
+        body{font-family:'Hind Siliguri', Arial; background:var(--bg); padding:10px; max-width:650px; margin:auto; color:#333;}
+     .header{background:linear-gradient(135deg, var(--primary), var(--secondary)); color:white; padding:20px; border-radius:15px; text-align:center; margin-bottom:15px;}
+     .header h1{margin:0; font-size:28px; font-weight:700;}
+     .card{background:var(--card); padding:15px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.08); margin-bottom:15px;}
+        input, button, select{padding:12px; margin:6px 0; width:100%; border:1px solid #ddd; border-radius:8px; font-size:16px; box-sizing:border-box; font-family:inherit;}
+        button{background:var(--primary); color:white; border:none; cursor:pointer; font-weight:600;}
+        button:hover{opacity:0.9;}
+     .btn-small{width:auto; padding:8px 12px; margin:3px; font-size:14px;}
+     .btn-call{background:#28a745;}.btn-wa{background:#25D366;}.btn-del{background:#dc3545;}.btn-edit{background:#ffc107; color:black;}
+     .btn-joma{background:#17a2b8;}.btn-baki{background:#6f42c1;}
+     .total{font-size:24px; font-weight:700; color:var(--secondary); text-align:center;}
+     .customer-item{background:#f8f9fa; margin:8px 0; padding:12px; border-radius:10px; border-left:4px solid var(--primary);}
+     .row{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;}
+    </style>
+</head>
+<body>
+
+<div id="mainApp">
+    <div class="header">
+        <h1>🏪 ঘরের বাজার</h1>
+        <p>স্মার্ট দোকান খাতা</p>
+    </div>
+
+    <div class="card">
+        <div class="total">মোট বাকি: <span id="totalDue">0</span> টাকা</div>
+        <div class="total" style="font-size:16px; color:var(--primary);">আজকের বাকি: <span id="todayDue">0</span> টাকা</div>
+    </div>
+
+    <div class="card">
+        <h3 id="formTitle">➕ নতুন এন্ট্রি</h3>
+        <input type="hidden" id="editId">
+        <input type="text" id="customerName" placeholder="গ্রাহকের নাম">
+        <input type="tel" id="customerPhone" placeholder="মোবাইল নাম্বার 01XXXXXXXXX">
+        <input type="number" id="amount" placeholder="বাকির টাকা">
+        <input type="number" id="paidAmount" placeholder="জমা/পরিশোধ টাকা" value="0">
+        <input type="date" id="date">
+        <button onclick="saveEntry()">সেভ করুন</button>
+        <button onclick="cancelEdit()" id="cancelBtn" style="background:gray; display:none;">বাতিল</button>
+    </div>
+
+    <div class="card">
+        <input type="text" id="search" placeholder="🔍 নাম/নাম্বার দিয়ে সার্চ" onkeyup="showList()">
+        <button onclick="sendWhatsAppList()" style="background:#25D366;">📲 WhatsApp এ লিস্ট পাঠান</button>
+        <button onclick="exportData()">💾 ডাটা ব্যাকআপ</button>
+        <button onclick="window.print()">🖨️ রিপোর্ট প্রিন্ট</button>
+        <h3>গ্রাহকের লিস্ট</h3>
+        <div id="list"></div>
+    </div>
+</div>
+
+<script>
+const SHOP_NAME = "ঘরের বাজার";
+let data = JSON.parse(localStorage.getItem('ghorerbazar')) || [];
+document.getElementById('date').valueAsDate = new Date();
+let editMode = false;
+showList();
+
+function saveEntry(){
+    let id = document.getElementById('editId').value;
+    let name = document.getElementById('customerName').value;
+    if(!name){ alert("নাম লিখুন"); return; }
+
+    let entry = {
+        id: editMode? parseInt(id) : Date.now(),
+        name: name,
+        phone: document.getElementById('customerPhone').value,
+        taka: parseInt(document.getElementById('amount').value) || 0,
+        paid: parseInt(document.getElementById('paidAmount').value) || 0,
+        date: document.getElementById('date').value
+    };
+    if(editMode){
+        let index = data.findIndex(d=>d.id==id); data[index]=entry;
+    } else { data.push(entry); }
+    saveData(); cancelEdit();
+}
+
+function editEntry(id){
+    let d = data.find(d=>d.id==id);
+    document.getElementById('editId').value = d.id;
+    document.getElementById('customerName').value = d.name;
+    document.getElementById('customerPhone').value = d.phone;
+    document.getElementById('amount').value = d.taka;
+    document.getElementById('paidAmount').value = d.paid;
+    document.getElementById('date').value = d.date;
+    document.getElementById('formTitle').innerText = "✏️ এন্ট্রি এডিট করুন";
+    document.getElementById('cancelBtn').style.display = 'block';
+    editMode = true; window.scrollTo(0,0);
+}
+
+function cancelEdit(){
+    editMode=false; document.getElementById('editId').value="";
+    ['customerName','customerPhone','amount','paidAmount'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('paidAmount').value='0'; document.getElementById('formTitle').innerText="➕ নতুন এন্ট্রি";
+    document.getElementById('cancelBtn').style.display = 'none';
+}
+
+function deleteEntry(id){ if(confirm("ডিলিট করবেন?")){ data = data.filter(d=>d.id!=id); saveData(); } }
+
+// নতুন ফাংশন ১: জমা নেওয়া
+function addJoma(id){
+    let pay = prompt("কত টাকা জমা নিলেন?");
+    if(pay &&!isNaN(pay) && pay > 0){
+        let c = data.find(d=>d.id==id);
+        c.paid += parseInt(pay);
+        saveData();
+    }
+}
+
+// নতুন ফাংশন ২: নতুন বাকি যোগ
+function addBaki(id){
+    let baki = prompt("আর কত টাকা বাকি দিল?");
+    if(baki &&!isNaN(baki) && baki > 0){
+        let c = data.find(d=>d.id==id);
+        c.taka += parseInt(baki);
+        c.date = new Date().toISOString().split('T')[0]; // আজকের তারিখ
+        saveData();
+    }
+}
+
+function saveData(){ localStorage.setItem('ghorerbazar', JSON.stringify(data)); showList(); }
+
+function exportData(){
+    let blob = new Blob([JSON.stringify(data)], {type: "application/json"});
+    let a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = "ghorerbazar_backup.json"; a.click();
+}
+
+function sendWhatsAppList(){
+    let msg = `*${SHOP_NAME}*\n*বাকির হিসাব*\n----------------\n`;
+    data.forEach(d=>{ let baki=d.taka-d.paid; if(baki>0) msg+=`*${d.name}* - ${baki} টাকা - ${d.phone}\n`; });
+    msg+=`----------------\nমোট বাকি: ${document.getElementById('totalDue').innerText} টাকা`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function showList(){
+    let search = document.getElementById('search').value.toLowerCase();
+    let list = document.getElementById('list'); let totalDue=0,todayDue=0;
+    let today=new Date().toISOString().split('T')[0]; list.innerHTML='';
+    data.filter(d => d.name.toLowerCase().includes(search) || d.phone.includes(search)).forEach(d=>{
+        let baki=d.taka-d.paid; totalDue+=baki; if(d.date===today) todayDue+=baki;
+        list.innerHTML+=`<div class="customer-item"><div class="row"><div><b>${d.name}</b><br><small>📞${d.phone || 'নাম্বার নাই'}</small><br>বাকি:${d.taka}|জমা:${d.paid}|<b style="color:red;">বর্তমান:${baki}</b><br><small>${d.date}</small></div><div>
+        ${d.phone?`<a href="tel:${d.phone}"><button class="btn-small btn-call">কল</button></a>`:''}
+        ${d.phone?`<a href="https://wa.me/88${d.phone}" target="_blank"><button class="btn-small btn-wa">WA</button></a>`:''}
+        <button class="btn-small btn-baki" onclick="addBaki(${d.id})">+বাকি</button>
+        <button class="btn-small btn-joma" onclick="addJoma(${d.id})">+জমা</button>
+        <button class="btn-small btn-edit" onclick="editEntry(${d.id})">এডিট</button>
+        <button class="btn-small btn-del" onclick="deleteEntry(${d.id})">ডিলেট</button></div></div></div>`;
+    });
+    document.getElementById('totalDue').innerText=totalDue; document.getElementById('todayDue').innerText=todayDue;
+}
+</script>
+</body>
+</html>
