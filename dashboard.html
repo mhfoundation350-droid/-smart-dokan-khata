@@ -5,43 +5,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     *{box-sizing:border-box;}
-    body{font-family: 'SolaimanLipi', Arial; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin:0; padding:15px; min-height:100vh;}
+    body{font-family: 'SolaimanLipi', Arial; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin:0; padding:10px; min-height:100vh;}
     .container{max-width:600px; margin:auto;}
-    .header{display:flex; align-items:center; background:white; padding:15px; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.2); margin-bottom:20px;}
-    .header img{width:50px; margin-right:10px;}
-    .header h2{margin:0; color:#667eea; font-size:18px; flex:1;}
-    .header button{background:#ff4757; color:white; border:none; padding:8px 15px; border-radius:8px; cursor:pointer;}
-    .card{background:white; padding:20px; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.15); margin-bottom:20px;}
-    .card h3{margin-top:0; color:#333; border-bottom:2px solid #667eea; padding-bottom:10px;}
-    input, select{width:100%; padding:12px; margin:8px 0; border:2px solid #ddd; border-radius:8px; font-size:16px;}
+    
+    .header{display:flex; align-items:center; background:white; padding:10px 12px; border-radius:12px; box-shadow:0 3px 10px rgba(0,0,0,0.15); margin-bottom:12px;}
+    .header img{width:40px; margin-right:8px;}
+    .header h2{margin:0; color:#667eea; font-size:16px; flex:1;}
+    .header button{background:#ff4757; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-size:13px;}
+    
+    .card{background:white; padding:12px; border-radius:12px; box-shadow:0 3px 10px rgba(0,0,0,0.12); margin-bottom:12px;}
+    .card h3{margin-top:0; color:#333; border-bottom:1px solid #667eea; padding-bottom:6px; font-size:15px;}
+    
+    input, select{width:100%; padding:8px 10px; margin:6px 0; border:1.5px solid #ddd; border-radius:6px; font-size:14px;}
     input:focus{border-color:#667eea; outline:none;}
-    .btn-group{display:flex; gap:10px;}
-    .btn{flex:1; padding:12px; border:none; border-radius:8px; cursor:pointer; font-size:16px; font-weight:bold;}
+    
+    .btn-group{display:flex; gap:8px;}
+    .btn{flex:1; padding:8px; border:none; border-radius:6px; cursor:pointer; font-size:14px; font-weight:bold;}
     .btn-baki{background:#ff6b6b; color:white;}
     .btn-joma{background:#1dd1a1; color:white;}
     .btn-add{background:#667eea; color:white;}
-    .btn-confirm{background:#3742fa; color:white; width:100%; margin-top:10px;}
-    .btn-select{border:3px solid transparent;}
-    .btn-select.active{border-color:#333; transform:scale(1.02);}
-    .summary{display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:center;}
-    .summary-box{background:#f1f2f6; padding:15px; border-radius:10px;}
-    .summary-box h4{margin:5px 0; color:#666; font-size:14px;}
-    .summary-box p{margin:5px 0; font-size:22px; font-weight:bold; color:#667eea;}
-    .customer-list .customer{display:flex; justify-content:space-between; align-items:center; background:#f1f2f6; padding:12px; border-radius:10px; margin:8px 0; gap:10px;}
-    .customer-info b{color:#333;} .customer-info small{color:#666;}
-    .customer-balance{font-weight:bold; font-size:18px;}
+    .btn-confirm{background:#3742fa; color:white; width:100%; margin-top:8px;}
+    .btn-select{border:2px solid transparent;}
+    .btn-select.active{border-color:#333; transform:scale(1.01);}
+    
+    .summary{display:grid; grid-template-columns:1fr 1fr; gap:8px; text-align:center;}
+    .summary-box{background:#f1f2f6; padding:10px; border-radius:8px;}
+    .summary-box h4{margin:3px 0; color:#666; font-size:12px;}
+    .summary-box p{margin:3px 0; font-size:18px; font-weight:bold; color:#667eea;}
+    
+    .customer-list .customer{display:flex; justify-content:space-between; align-items:center; background:#f1f2f6; padding:8px 10px; border-radius:8px; margin:6px 0; gap:8px;}
+    .customer-info b{color:#333; font-size:14px;}
+    .customer-info small{color:#666; font-size:12px;}
+    .customer-balance{font-weight:bold; font-size:15px;}
     .balance-due{color:#ff4757;} .balance-clear{color:#1dd1a1;}
-    .icon-group{display:flex; gap:6px;}
-    .icon-btn{background:white; padding:8px; border-radius:50%; width:34px; height:34px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+    
+    .icon-group{display:flex; gap:4px;}
+    .icon-btn{background:white; padding:6px; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.1);}
     .icon-btn:hover{background:#eee;}
-    .icon-btn svg{width:18px; height:18px;}
+    .icon-btn svg{width:15px; height:15px;}
     .icon-delete svg{fill:#ff4757;}
-    .search-box{position:relative; margin-bottom:15px;}
-    .search-box input{padding-left:40px;}
-    .search-icon{position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:18px; color:#999;}
-    .history-item{display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;}
+    
+    .search-box{position:relative; margin-bottom:10px;}
+    .search-box input{padding-left:32px; padding-top:7px; padding-bottom:7px;}
+    .search-icon{position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:15px; color:#999;}
+    
+    .history-item{display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid #eee; font-size:13px;}
     .history-item:last-child{border-bottom:none;}
-    .history-date{font-size:12px; color:#666;}
+    .history-date{font-size:11px; color:#666;}
     .history-baki{color:#ff4757; font-weight:bold;} 
     .history-joma{color:#1dd1a1; font-weight:bold;}
   </style>
@@ -134,15 +144,12 @@
     
     document.getElementById('amount').value = ""; selectedType = null;
     document.getElementById('btnBaki').classList.remove('active'); document.getElementById('btnJoma').classList.remove('active'); 
-    alert("লেনদেন সেভ হয়েছে ✅");
     loadData();
   }
 
   window.deleteCustomer = async (custId, custName) => {
     if(confirm(`আপনি কি "${custName}" কে ডিলেট করতে চান?`)){
-      await deleteDoc(doc(db, "customers", custId)); 
-      alert("কাস্টমার ডিলেট হয়েছে");
-      loadData();
+      await deleteDoc(doc(db, "customers", custId)); loadData();
     }
   }
 
@@ -172,7 +179,7 @@
       list.innerHTML += `
         <div class="customer">
           <div class="customer-info"><b>${c.name}</b><br><small>${c.phone}</small></div>
-          <div style="display:flex; align-items:center; gap:8px;">
+          <div style="display:flex; align-items:center; gap:6px;">
             <div class="icon-group">
               <a href="tel:${c.phone}" class="icon-btn"><svg viewBox="0 0 24 24" fill="#4CAF50"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></a>
               <a href="https://wa.me/${cleanNumber}" target="_blank" class="icon-btn"><svg viewBox="0 0 32 32" fill="#25D366"><path d="M16.004 3.626c-7.372 0-13.375 5.996-13.375 13.373 0 2.354.614 4.648 1.781 6.673L3.006 30.47l6.887-1.802a13.37 13.37 0 0 0 6.111 1.555c7.372 0 13.375-5.996 13.375-13.373S23.376 3.626 16.004 3.626zm5.954 16.22c-.262.73-1.514 1.4-2.055 1.49-.517.09-1.172.13-1.89-.12-.434-.148-.99-.342-1.702-.672-3.01-1.433-4.972-4.778-5.12-4.997-.147-.219-1.209-1.605-1.209-3.061s.758-2.165 1.028-2.461c.27-.298.59-.378.788-.378.176 0 .354.01.51.015.164.004.384-.06.6.46.255.646.873 2.247.95 2.408.076.161.127.349.025.556-.101.208-.152.337-.297.516-.147.18-.31.402-.442.54-.147.165-.301.345-.13.675.17.33.756 1.245 1.623 2.015 1.12 1.004 2.06 1.315 2.352 1.462.29.148.46.123.63-.074.17-.196.73-.852.926-1.145.196-.293.39-.246.655-.146.266.101 1.694.799 1.984.945.29.146.484.219.558.34.074.12.074.7-.18 1.43z"/></svg></a>
