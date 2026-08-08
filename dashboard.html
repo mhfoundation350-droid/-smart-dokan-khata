@@ -25,6 +25,9 @@
     .btn-baki{background:#ff6b6b; color:white;}
     .btn-joma{background:#1dd1a1; color:white;}
     .btn-add{background:#667eea; color:white;}
+    .btn-confirm{background:#3742fa; color:white; width:100%; margin-top:10px;} /* নতুন কনফার্ম বাটন */
+    .btn-select{border:3px solid transparent;}
+    .btn-select.active{border-color:#333;} /* কোনটা সিলেক্ট হলো বুঝার জন্য */
     
     .summary{display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:center;}
     .summary-box{background:#f1f2f6; padding:15px; border-radius:10px;}
@@ -71,14 +74,16 @@
     <button class="btn btn-add" onclick="addCustomer()">কাস্টমার এড করুন</button>
   </div>
 
+  <!-- নতুন লেনদেন - কনফার্ম সিস্টেম -->
   <div class="card">
     <h3>নতুন লেনদেন</h3>
     <select id="custSelect"><option>কাস্টমার সিলেক্ট করুন</option></select>
     <input type="number" id="amount" placeholder="টাকার পরিমাণ">
     <div class="btn-group">
-      <button class="btn btn-baki" onclick="addTransaction('baki')">বাকি +</button>
-      <button class="btn btn-joma" onclick="addTransaction('joma')">জমা -</button>
+      <button id="btnBaki" class="btn btn-baki btn-select" onclick="selectType('baki')">বাকি +</button>
+      <button id="btnJoma" class="btn btn-joma btn-select" onclick="selectType('joma')">জমা -</button>
     </div>
+    <button class="btn btn-confirm" onclick="confirmTransaction()">✅ কনফার্ম করুন</button>
   </div>
 
   <div class="card">
@@ -95,7 +100,6 @@
     </div>
   </div>
 
-  <!-- সকল কাস্টমার + সার্চ -->
   <div class="card">
     <h3>সকল কাস্টমার</h3>
     <div class="search-box">
@@ -125,7 +129,8 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
   let userId = null;
-  let customers = []; // সব কাস্টমার এখানে থাকবে
+  let customers = [];
+  let selectedType = null; // নতুন: কোনটা সিলেক্ট হইছে
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -156,25 +161,41 @@
     loadData();
   }
 
-  window.addTransaction = async (type) => {
+  // 1. আগে টাইপ সিলেক্ট করবে
+  window.selectType = (type) => {
+    selectedType = type;
+    document.getElementById('btnBaki').classList.remove('active');
+    document.getElementById('btnJoma').classList.remove('active');
+    if(type === 'baki') document.getElementById('btnBaki').classList.add('active');
+    else document.getElementById('btnJoma').classList.add('active');
+  }
+
+  // 2. তারপর কনফার্ম করবে
+  window.confirmTransaction = async () => {
     const custId = document.getElementById('custSelect').value;
     const amount = Number(document.getElementById('amount').value);
-    if(custId === "কাস্টমার সিলেক্ট করুন" || !amount) return alert("কাস্টমার ও টাকা সিলেক্ট করুন");
     
-    await addDoc(collection(db, "transactions"), {userId, custId, amount, type, date: new Date()});
+    if(custId === "কাস্টমার সিলেক্ট করুন") return alert("কাস্টমার সিলেক্ট করুন");
+    if(!amount) return alert("টাকার পরিমাণ দিন");
+    if(!selectedType) return alert("বাকি নাকি জমা সিলেক্ট করুন");
+
+    await addDoc(collection(db, "transactions"), {userId, custId, amount, type: selectedType, date: new Date()});
     
     const custRef = doc(db, "customers", custId);
     const custSnap = await getDoc(custRef);
     let newBalance = custSnap.data().balance;
-    if(type === 'baki') newBalance += amount;
+    if(selectedType === 'baki') newBalance += amount;
     else newBalance -= amount;
     await updateDoc(custRef, {balance: newBalance});
     
     document.getElementById('amount').value = "";
+    selectedType = null; // রিসেট
+    document.getElementById('btnBaki').classList.remove('active');
+    document.getElementById('btnJoma').classList.remove('active');
+    alert("লেনদেন সেভ হয়েছে ✅");
     loadData();
   }
 
-  // সার্চ ফাংশন
   window.searchCustomer = () => {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
     const filtered = customers.filter(c => 
@@ -184,7 +205,6 @@
     displayCustomers(filtered);
   }
 
-  // কাস্টমার দেখানোর ফাংশন
   function displayCustomers(custList) {
     const list = document.getElementById('customerList');
     list.innerHTML = "";
@@ -233,6 +253,7 @@
     const custSnap = await getDocs(custQuery);
     customers = [];
     const select = document.getElementById('custSelect');
+    select.innerHTML = "<option>কাস্টমার সিলেক্ট করুন</option>";
     let totalBaki = 0;
 
     custSnap.forEach(doc => {
@@ -242,7 +263,7 @@
       if(c.balance > 0) totalBaki += c.balance;
     });
 
-    displayCustomers(customers); // প্রথমে সব দেখাবে
+    displayCustomers(customers);
 
     const transQuery = query(collection(db, "transactions"), where("userId", "==", userId));
     const transSnap = await getDocs(transQuery);
