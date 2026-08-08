@@ -52,6 +52,7 @@
     .history-date{font-size:10px; color:#666;}
     .history-baki{color:#ff4757; font-weight:bold;} 
     .history-joma{color:#1dd1a1; font-weight:bold;}
+    .history-note{font-size:11px; color:#666; text-align:center; padding:5px;}
   </style>
 </head>
 <body>
@@ -91,11 +92,12 @@
     <div id="customerList" class="customer-list">কোনো কাস্টমার নাই</div>
   </div>
 
-  <!-- সাম্প্রতিক লেনদেন একদম নিচে + সার্চ সহ -->
+  <!-- সাম্প্রতিক লেনদেন - 5 টা + সার্চ -->
   <div class="card">
     <h3>সাম্প্রতিক লেনদেন</h3>
-    <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="historySearch" placeholder="নাম বা নাম্বার দিয়ে সার্চ করুন..." onkeyup="searchHistory()"></div>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="historySearch" placeholder="নাম বা নাম্বার লিখে সার্চ করুন..." onkeyup="searchHistory()"></div>
     <div id="transactionHistory">কোনো লেনদেন নাই</div>
+    <div class="history-note">নোট: শুধু লাস্ট 5 টি দেখানো হচ্ছে। সার্চ করে পুরাতন গুলো দেখুন</div>
   </div>
 
 </div>
@@ -162,6 +164,10 @@
   // নতুন: হিস্টোরি সার্চ
   window.searchHistory = () => {
     const searchTerm = document.getElementById('historySearch').value.toLowerCase();
+    if(searchTerm === ""){
+      displayHistory(allTransactions.slice(0,5)); // খালি থাকলে 5টা
+      return;
+    }
     const filtered = allTransactions.filter(t => {
       const cust = customers.find(c => c.id === t.custId);
       return cust && (cust.name.toLowerCase().includes(searchTerm) || cust.phone.includes(searchTerm));
@@ -248,7 +254,7 @@
       return dateB - dateA;
     });
 
-    displayHistory(allTransactions); // সব লেনদেন দেখাবে
+    displayHistory(allTransactions.slice(0,5)); // শুধু 5টা
 
     document.getElementById('totalBaki').innerText = totalBaki + " টাকা";
     document.getElementById('totalJoma').innerText = totalJoma + " টাকা";
