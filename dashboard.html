@@ -45,11 +45,19 @@
     .icon-btn{background:white; padding:8px; border-radius:50%; text-decoration:none; display:flex; align-items:center; justify-content:center; width:34px; height:34px; box-shadow:0 2px 5px rgba(0,0,0,0.1); border:none; cursor:pointer;}
     .icon-btn:hover{background:#eee;}
     .icon-btn svg{width:18px; height:18px;}
-    .icon-delete svg{fill:#ff4757;} /* ডিলেট লাল */
+    .icon-delete svg{fill:#ff4757;}
     
     .search-box{position:relative; margin-bottom:15px;}
     .search-box input{padding-left:40px;}
     .search-icon{position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:18px; color:#999;}
+
+    /* নতুন হিস্টোরি CSS */
+    .history-item{display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #eee;}
+    .history-item:last-child{border-bottom:none;}
+    .history-date{font-size:12px; color:#666;}
+    .history-amount{font-weight:bold;}
+    .history-baki{color:#ff4757;}
+    .history-joma{color:#1dd1a1;}
   </style>
 </head>
 <body>
@@ -100,6 +108,12 @@
     </div>
   </div>
 
+  <!-- নতুন: লেনদেনের হিস্টোরি -->
+  <div class="card">
+    <h3>সাম্প্রতিক লেনদেন</h3>
+    <div id="transactionHistory">কোনো লেনদেন নাই</div>
+  </div>
+
   <div class="card">
     <h3>সকল কাস্টমার</h3>
     <div class="search-box">
@@ -114,31 +128,26 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, query, where, doc, setDoc, updateDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, query, where, doc, setDoc, updateDoc, getDoc, deleteDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  const firebaseConfig = {
+  const app = initializeApp({
     apiKey: "AIzaSyBdbroawwWdIX6CgQJFFv4Kk3oXAgnc_ak",
     authDomain: "smart-dokan-khata.firebaseapp.com",
     projectId: "smart-dokan-khata",
     storageBucket: "smart-dokan-khata.firebasestorage.app",
     messagingSenderId: "941938264732",
     appId: "1:941938264732:web:6f1ddb88c0d8df480dfb59"
-  };
-
-  const app = initializeApp(firebaseConfig);
+  });
   const auth = getAuth(app);
   const db = getFirestore(app);
   let userId = null;
   let customers = [];
   let selectedType = null;
+  const days = ["রবিবার", "সোমবার", "মঙ্গলবার", "বুধবার", "বৃহস্পতিবার", "শুক্রবার", "শনিবার"];
 
   onAuthStateChanged(auth, (user) => {
-    if (user) {
-      userId = user.uid;
-      loadData();
-    } else {
-      window.location.href = "index.html";
-    }
+    if (user) { userId = user.uid; loadData(); } 
+    else { window.location.href = "index.html"; }
   });
 
   window.logout = () => signOut(auth);
@@ -156,8 +165,7 @@
     const phone = document.getElementById('custPhone').value;
     if(!name || !phone) return alert("নাম ও নাম্বার দিন");
     await addDoc(collection(db, "customers"), {userId, name, phone, balance: 0});
-    document.getElementById('custName').value = "";
-    document.getElementById('custPhone').value = "";
+    document.getElementById('custName').value = ""; document.getElementById('custPhone').value = "";
     loadData();
   }
 
@@ -172,12 +180,12 @@
   window.confirmTransaction = async () => {
     const custId = document.getElementById('custSelect').value;
     const amount = Number(document.getElementById('amount').value);
-    
     if(custId === "কাস্টমার সিলেক্ট করুন") return alert("কাস্টমার সিলেক্ট করুন");
     if(!amount) return alert("টাকার পরিমাণ দিন");
     if(!selectedType) return alert("বাকি নাকি জমা সিলেক্ট করুন");
 
-    await addDoc(collection(db, "transactions"), {userId, custId, amount, type: selectedType, date: new Date()});
+    const now = new Date(); // বর্তমান সময় নিলাম
+    await addDoc(collection(db, "transactions"), {userId, custId, amount, type: selectedType, date: now});
     
     const custRef = doc(db, "customers", custId);
     const custSnap = await getDoc(custRef);
@@ -187,16 +195,13 @@
     await updateDoc(custRef, {balance: newBalance});
     
     document.getElementById('amount').value = "";
-    selectedType = null;
-    document.getElementById('btnBaki').classList.remove('active');
-    document.getElementById('btnJoma').classList.remove('active');
+    selectedType = null; document.getElementById('btnBaki').classList.remove('active'); document.getElementById('btnJoma').classList.remove('active');
     alert("লেনদেন সেভ হয়েছে ✅");
     loadData();
   }
 
-  // নতুন ডিলেট ফাংশন
   window.deleteCustomer = async (custId, custName) => {
-    if(confirm(`আপনি কি "${custName}" কে ডিলেট করতে চান? \nএই কাস্টমারের সব লেনদেনও ডিলেট হবে না।`)){
+    if(confirm(`আপনি কি "${custName}" কে ডিলেট করতে চান?`)){
       await deleteDoc(doc(db, "customers", custId));
       alert("কাস্টমার ডিলেট হয়েছে");
       loadData();
@@ -205,49 +210,37 @@
 
   window.searchCustomer = () => {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const filtered = customers.filter(c => 
-      c.name.toLowerCase().includes(searchTerm) || 
-      c.phone.includes(searchTerm)
-    );
+    const filtered = customers.filter(c => c.name.toLowerCase().includes(searchTerm) || c.phone.includes(searchTerm));
     displayCustomers(filtered);
+  }
+
+  function formatDate(timestamp){
+    const d = timestamp.toDate();
+    const date = d.toLocaleDateString('bn-BD');
+    const day = days[d.getDay()];
+    const time = d.toLocaleTimeString('bn-BD', {hour: '2-digit', minute:'2-digit'});
+    return `${date} - ${day} - ${time}`;
   }
 
   function displayCustomers(custList) {
     const list = document.getElementById('customerList');
     list.innerHTML = "";
-    if(custList.length === 0){
-      list.innerHTML = "কোনো কাস্টমার পাওয়া যায়নি";
-      return;
-    }
+    if(custList.length === 0){ list.innerHTML = "কোনো কাস্টমার পাওয়া যায়নি"; return; }
     
     custList.forEach(c => {
       const balanceClass = c.balance > 0 ? 'balance-due' : 'balance-clear';
       let cleanNumber = c.phone.replace(/\D/g, '');
-      if(cleanNumber.startsWith('0')) {
-        cleanNumber = '88' + cleanNumber.substring(1);
-      } else if(!cleanNumber.startsWith('88')) {
-        cleanNumber = '88' + cleanNumber;
-      }
+      if(cleanNumber.startsWith('0')) { cleanNumber = '88' + cleanNumber.substring(1); } 
+      else if(!cleanNumber.startsWith('88')) { cleanNumber = '88' + cleanNumber; }
       
       list.innerHTML += `
         <div class="customer">
-          <div class="customer-info">
-            <b>${c.name}</b><br>
-            <small>${c.phone}</small>
-          </div>
-          
+          <div class="customer-info"><b>${c.name}</b><br><small>${c.phone}</small></div>
           <div style="display:flex; align-items:center; gap:8px;">
             <div class="icon-group">
-              <a href="tel:${c.phone}" class="icon-btn">
-                <svg viewBox="0 0 24 24" fill="#4CAF50"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-              </a>
-              <a href="https://wa.me/${cleanNumber}" target="_blank" class="icon-btn">
-                <svg viewBox="0 0 32 32" fill="#25D366"><path d="M16.004 3.626c-7.372 0-13.375 5.996-13.375 13.373 0 2.354.614 4.648 1.781 6.673L3.006 30.47l6.887-1.802a13.37 13.37 0 0 0 6.111 1.555c7.372 0 13.375-5.996 13.375-13.373S23.376 3.626 16.004 3.626zm5.954 16.22c-.262.73-1.514 1.4-2.055 1.49-.517.09-1.172.13-1.89-.12-.434-.148-.99-.342-1.702-.672-3.01-1.433-4.972-4.778-5.12-4.997-.147-.219-1.209-1.605-1.209-3.061s.758-2.165 1.028-2.461c.27-.298.59-.378.788-.378.176 0 .354.01.51.015.164.004.384-.06.6.46.255.646.873 2.247.95 2.408.076.161.127.349.025.556-.101.208-.152.337-.297.516-.147.18-.31.402-.442.54-.147.165-.301.345-.13.675.17.33.756 1.245 1.623 2.015 1.12 1.004 2.06 1.315 2.352 1.462.29.148.46.123.63-.074.17-.196.73-.852.926-1.145.196-.293.39-.246.655-.146.266.101 1.694.799 1.984.945.29.146.484.219.558.34.074.12.074.7-.18 1.43z"/></svg>
-              </a>
-              <!-- ডিলেট বাটন -->
-              <button onclick="deleteCustomer('${c.id}', '${c.name}')" class="icon-btn icon-delete">
-                <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-              </button>
+              <a href="tel:${c.phone}" class="icon-btn"><svg viewBox="0 0 24 24" fill="#4CAF50"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></a>
+              <a href="https://wa.me/${cleanNumber}" target="_blank" class="icon-btn"><svg viewBox="0 0 32 32" fill="#25D366"><path d="M16.004 3.626c-7.372 0-13.375 5.996-13.375 13.373 0 2.354.614 4.648 1.781 6.673L3.006 30.47l6.887-1.802a13.37 13.37 0 0 0 6.111 1.555c7.372 0 13.375-5.996 13.375-13.373S23.376 3.626 16.004 3.626zm5.954 16.22c-.262.73-1.514 1.4-2.055 1.49-.517.09-1.172.13-1.89-.12-.434-.148-.99-.342-1.702-.672-3.01-1.433-4.972-4.778-5.12-4.997-.147-.219-1.209-1.605-1.209-3.061s.758-2.165 1.028-2.461c.27-.298.59-.378.788-.378.176 0 .354.01.51.015.164.004.384-.06.6.46.255.646.873 2.247.95 2.408.076.161.127.349.025.556-.101.208-.152.337-.297.516-.147.18-.31.402-.442.54-.147.165-.301.345-.13.675.17.33.756 1.245 1.623 2.015 1.12 1.004 2.06 1.315 2.352 1.462.29.148.46.123.63-.074.17-.196.73-.852.926-1.145.196-.293.39-.246.655-.146.266.101 1.694.799 1.984.945.29.146.484.219.558.34.074.12.074.7-.18 1.43z"/></svg></a>
+              <button onclick="deleteCustomer('${c.id}', '${c.name}')" class="icon-btn icon-delete"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
             </div>
             <div class="customer-balance ${balanceClass}">${c.balance} টাকা</div>
           </div>
@@ -262,27 +255,39 @@
 
     const custQuery = query(collection(db, "customers"), where("userId", "==", userId));
     const custSnap = await getDocs(custQuery);
-    customers = [];
-    const select = document.getElementById('custSelect');
-    select.innerHTML = "<option>কাস্টমার সিলেক্ট করুন</option>";
-    let totalBaki = 0;
+    customers = []; const select = document.getElementById('custSelect');
+    select.innerHTML = "<option>কাস্টমার সিলেক্ট করুন</option>"; let totalBaki = 0;
 
     custSnap.forEach(doc => {
-      const c = {id: doc.id, ...doc.data()};
-      customers.push(c);
+      const c = {id: doc.id, ...doc.data()}; customers.push(c);
       select.innerHTML += `<option value="${c.id}">${c.name} - ${c.phone}</option>`;
       if(c.balance > 0) totalBaki += c.balance;
     });
-
     displayCustomers(customers);
 
-    const transQuery = query(collection(db, "transactions"), where("userId", "==", userId));
+    const transQuery = query(collection(db, "transactions"), where("userId", "==", userId), orderBy("date", "desc"));
     const transSnap = await getDocs(transQuery);
-    let totalJoma = 0;
+    let totalJoma = 0; let historyHTML = "";
+    
     transSnap.forEach(doc => {
-      if(doc.data().type === 'joma') totalJoma += doc.data().amount;
+      const t = doc.data();
+      if(t.type === 'joma') totalJoma += t.amount;
+      
+      const cust = customers.find(c => c.id === t.custId);
+      const typeText = t.type === 'baki' ? 'বাকি' : 'জমা';
+      const typeClass = t.type === 'baki' ? 'history-baki' : 'history-joma';
+      
+      historyHTML += `
+        <div class="history-item">
+          <div>
+            <b>${cust ? cust.name : 'ডিলেট'}</b> - <span class="${typeClass}">${typeText} ${t.amount} টাকা</span><br>
+            <span class="history-date">${formatDate(t.date)}</span>
+          </div>
+        </div>
+      `;
     });
 
+    document.getElementById('transactionHistory').innerHTML = historyHTML || "কোনো লেনদেন নাই";
     document.getElementById('totalBaki').innerText = totalBaki + " টাকা";
     document.getElementById('totalJoma').innerText = totalJoma + " টাকা";
   }
