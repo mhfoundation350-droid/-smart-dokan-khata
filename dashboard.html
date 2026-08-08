@@ -27,7 +27,7 @@
     .btn-add{background:#667eea; color:white;}
     .btn-confirm{background:#3742fa; color:white; width:100%; margin-top:10px;}
     .btn-select{border:3px solid transparent;}
-    .btn-select.active{border-color:#333;}
+    .btn-select.active{border-color:#333; transform:scale(1.02);}
     
     .summary{display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:center;}
     .summary-box{background:#f1f2f6; padding:15px; border-radius:10px;}
@@ -51,13 +51,11 @@
     .search-box input{padding-left:40px;}
     .search-icon{position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:18px; color:#999;}
 
-    /* নতুন হিস্টোরি CSS */
     .history-item{display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #eee;}
     .history-item:last-child{border-bottom:none;}
     .history-date{font-size:12px; color:#666;}
-    .history-amount{font-weight:bold;}
-    .history-baki{color:#ff4757;}
-    .history-joma{color:#1dd1a1;}
+    .history-baki{color:#ff4757; font-weight:bold;}
+    .history-joma{color:#1dd1a1; font-weight:bold;}
   </style>
 </head>
 <body>
@@ -108,7 +106,6 @@
     </div>
   </div>
 
-  <!-- নতুন: লেনদেনের হিস্টোরি -->
   <div class="card">
     <h3>সাম্প্রতিক লেনদেন</h3>
     <div id="transactionHistory">কোনো লেনদেন নাই</div>
@@ -165,7 +162,8 @@
     const phone = document.getElementById('custPhone').value;
     if(!name || !phone) return alert("নাম ও নাম্বার দিন");
     await addDoc(collection(db, "customers"), {userId, name, phone, balance: 0});
-    document.getElementById('custName').value = ""; document.getElementById('custPhone').value = "";
+    document.getElementById('custName').value = ""; 
+    document.getElementById('custPhone').value = "";
     loadData();
   }
 
@@ -184,7 +182,7 @@
     if(!amount) return alert("টাকার পরিমাণ দিন");
     if(!selectedType) return alert("বাকি নাকি জমা সিলেক্ট করুন");
 
-    const now = new Date(); // বর্তমান সময় নিলাম
+    const now = new Date();
     await addDoc(collection(db, "transactions"), {userId, custId, amount, type: selectedType, date: now});
     
     const custRef = doc(db, "customers", custId);
@@ -195,7 +193,9 @@
     await updateDoc(custRef, {balance: newBalance});
     
     document.getElementById('amount').value = "";
-    selectedType = null; document.getElementById('btnBaki').classList.remove('active'); document.getElementById('btnJoma').classList.remove('active');
+    selectedType = null; 
+    document.getElementById('btnBaki').classList.remove('active'); 
+    document.getElementById('btnJoma').classList.remove('active');
     alert("লেনদেন সেভ হয়েছে ✅");
     loadData();
   }
@@ -210,12 +210,16 @@
 
   window.searchCustomer = () => {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const filtered = customers.filter(c => c.name.toLowerCase().includes(searchTerm) || c.phone.includes(searchTerm));
+    const filtered = customers.filter(c => 
+      c.name.toLowerCase().includes(searchTerm) || 
+      c.phone.includes(searchTerm)
+    );
     displayCustomers(filtered);
   }
 
   function formatDate(timestamp){
-    const d = timestamp.toDate();
+    if(!timestamp) return "তারিখ নাই";
+    const d = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
     const date = d.toLocaleDateString('bn-BD');
     const day = days[d.getDay()];
     const time = d.toLocaleTimeString('bn-BD', {hour: '2-digit', minute:'2-digit'});
@@ -276,12 +280,13 @@
       const cust = customers.find(c => c.id === t.custId);
       const typeText = t.type === 'baki' ? 'বাকি' : 'জমা';
       const typeClass = t.type === 'baki' ? 'history-baki' : 'history-joma';
+      const dateText = formatDate(t.date);
       
       historyHTML += `
         <div class="history-item">
           <div>
             <b>${cust ? cust.name : 'ডিলেট'}</b> - <span class="${typeClass}">${typeText} ${t.amount} টাকা</span><br>
-            <span class="history-date">${formatDate(t.date)}</span>
+            <span class="history-date">${dateText}</span>
           </div>
         </div>
       `;
