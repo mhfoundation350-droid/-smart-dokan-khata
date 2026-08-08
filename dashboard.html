@@ -44,7 +44,7 @@
     .icon-btn svg{width:13px; height:13px;}
     .icon-delete svg{fill:#ff4757;}
     
-    .search-box{position:relative; margin-bottom:8px;}
+    .search-box{position:relative; margin:5px 0 8px 0;}
     .search-box input{padding-left:28px; padding-top:6px; padding-bottom:6px;}
     .search-icon{position:absolute; left:8px; top:50%; transform:translateY(-50%); font-size:14px; color:#999;}
     
@@ -86,14 +86,16 @@
   </div>
 
   <div class="card">
-    <h3>সাম্প্রতিক লেনদেন</h3>
-    <div id="transactionHistory">কোনো লেনদেন নাই</div>
-  </div>
-
-  <div class="card">
     <h3>সকল কাস্টমার</h3>
     <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="নাম বা নাম্বার দিয়ে সার্চ করুন..." onkeyup="searchCustomer()"></div>
     <div id="customerList" class="customer-list">কোনো কাস্টমার নাই</div>
+  </div>
+
+  <!-- সাম্প্রতিক লেনদেন একদম নিচে + সার্চ সহ -->
+  <div class="card">
+    <h3>সাম্প্রতিক লেনদেন</h3>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="historySearch" placeholder="নাম বা নাম্বার দিয়ে সার্চ করুন..." onkeyup="searchHistory()"></div>
+    <div id="transactionHistory">কোনো লেনদেন নাই</div>
   </div>
 
 </div>
@@ -105,7 +107,7 @@
 
   const app = initializeApp({apiKey: "AIzaSyBdbroawwWdIX6CgQJFFv4Kk3oXAgnc_ak", authDomain: "smart-dokan-khata.firebaseapp.com", projectId: "smart-dokan-khata"});
   const auth = getAuth(app); const db = getFirestore(app);
-  let userId = null; let customers = []; let selectedType = null;
+  let userId = null; let customers = []; let selectedType = null; let allTransactions = [];
   const days = ["রবিবার", "সোমবার", "মঙ্গলবার", "বুধবার", "বৃহস্পতিবার", "শুক্রবার", "শনিবার"];
 
   onAuthStateChanged(auth, (user) => { if (user) { userId = user.uid; loadData(); } else { window.location.href = "index.html"; } });
@@ -157,6 +159,16 @@
     displayCustomers(filtered);
   }
 
+  // নতুন: হিস্টোরি সার্চ
+  window.searchHistory = () => {
+    const searchTerm = document.getElementById('historySearch').value.toLowerCase();
+    const filtered = allTransactions.filter(t => {
+      const cust = customers.find(c => c.id === t.custId);
+      return cust && (cust.name.toLowerCase().includes(searchTerm) || cust.phone.includes(searchTerm));
+    });
+    displayHistory(filtered);
+  }
+
   function formatDate(timestamp){
     if(!timestamp) return "তারিখ নাই";
     const d = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
@@ -190,6 +202,24 @@
     });
   }
 
+  function displayHistory(transList) {
+    let historyHTML = "";
+    transList.forEach(t => {
+      const cust = customers.find(c => c.id === t.custId);
+      const typeText = t.type === 'baki' ? 'বাকি' : 'জমা';
+      const typeClass = t.type === 'baki' ? 'history-baki' : 'history-joma';
+      historyHTML += `
+        <div class="history-item">
+          <div>
+            <b>${cust ? cust.name : 'ডিলেট'}</b> - <span class="${typeClass}">${typeText} ${t.amount} টাকা</span><br>
+            <span class="history-date">${formatDate(t.date)}</span>
+          </div>
+        </div>
+      `;
+    });
+    document.getElementById('transactionHistory').innerHTML = historyHTML || "কোনো লেনদেন নাই";
+  }
+
   async function loadData() { 
     const custSnap = await getDocs(query(collection(db, "customers"), where("userId", "==", userId)));
     customers = []; const select = document.getElementById('custSelect');
@@ -204,36 +234,22 @@
     displayCustomers(customers);
 
     const transSnap = await getDocs(query(collection(db, "transactions"), where("userId", "==", userId)));
-    let totalJoma = 0; let historyArray = [];
+    let totalJoma = 0; allTransactions = [];
     
     transSnap.forEach(doc => {
       const t = {id: doc.id, ...doc.data()};
       if(t.type === 'joma') totalJoma += t.amount;
-      historyArray.push(t);
+      allTransactions.push(t);
     });
 
-    historyArray.sort((a,b) => {
+    allTransactions.sort((a,b) => {
       const dateA = a.date ? (a.date.toDate ? a.date.toDate() : new Date(a.date)) : 0;
       const dateB = b.date ? (b.date.toDate ? b.date.toDate() : new Date(b.date)) : 0;
       return dateB - dateA;
     });
 
-    let historyHTML = "";
-    historyArray.forEach(t => {
-      const cust = customers.find(c => c.id === t.custId);
-      const typeText = t.type === 'baki' ? 'বাকি' : 'জমা';
-      const typeClass = t.type === 'baki' ? 'history-baki' : 'history-joma';
-      historyHTML += `
-        <div class="history-item">
-          <div>
-            <b>${cust ? cust.name : 'ডিলেট'}</b> - <span class="${typeClass}">${typeText} ${t.amount} টাকা</span><br>
-            <span class="history-date">${formatDate(t.date)}</span>
-          </div>
-        </div>
-      `;
-    });
+    displayHistory(allTransactions); // সব লেনদেন দেখাবে
 
-    document.getElementById('transactionHistory').innerHTML = historyHTML || "কোনো লেনদেন নাই";
     document.getElementById('totalBaki').innerText = totalBaki + " টাকা";
     document.getElementById('totalJoma').innerText = totalJoma + " টাকা";
   }
