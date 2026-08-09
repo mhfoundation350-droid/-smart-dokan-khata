@@ -1,26 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="bn">
 <head>
   <title>Smart Dokan Khata</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#667eea">
   <style>
     *{box-sizing:border-box;}
-    body{font-family: 'SolaimanLipi', Arial; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin:0; padding:8px; min-height:100vh;}
+    body{font-family: 'SolaimanLipi', Arial, sans-serif; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin:0; padding:8px; min-height:100vh;}
     .container{max-width:600px; margin:auto;}
     
     .header{display:flex; align-items:center; background:white; padding:8px 10px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.15); margin-bottom:8px;}
-    .header img{width:35px; margin-right:6px;}
+    .header img{width:35px; height:35px; margin-right:6px; border-radius:5px; object-fit:cover;}
     .header h2{margin:0; color:#667eea; font-size:15px; flex:1;}
     .header button{background:#ff4757; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-size:12px;}
     
     .card{background:white; padding:10px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1); margin-bottom:8px;}
     .card h3{margin:0 0 8px 0; color:#333; border-bottom:1px solid #667eea; padding-bottom:5px; font-size:14px;}
     
-    input, select{width:100%; padding:6px 8px; margin:5px 0; border:1px solid #ccc; border-radius:5px; font-size:13px;}
+    input, select{width:100%; padding:6px 8px; margin:5px 0; border:1px solid #ccc; border-radius:5px; font-size:13px; font-family: inherit;}
     input:focus{border-color:#667eea; outline:none;}
     
     .btn-group{display:flex; gap:6px;}
-    .btn{flex:1; padding:7px; border:none; border-radius:5px; cursor:pointer; font-size:13px; font-weight:bold;}
+    .btn{flex:1; padding:7px; border:none; border-radius:5px; cursor:pointer; font-size:13px; font-weight:bold; font-family: inherit;}
     .btn-baki{background:#ff6b6b; color:white;}
     .btn-joma{background:#1dd1a1; color:white;}
     .btn-add{background:#667eea; color:white;}
@@ -40,7 +42,7 @@
     .balance-due{color:#ff4757;} .balance-clear{color:#1dd1a1;}
     
     .icon-group{display:flex; gap:3px;}
-    .icon-btn{background:white; padding:5px; border-radius:50%; width:25px; height:25px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer;}
+    .icon-btn{background:white; padding:5px; border-radius:50%; width:25px; height:25px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; text-decoration:none;}
     .icon-btn svg{width:13px; height:13px;}
     .icon-delete svg{fill:#ff4757;}
     
@@ -53,51 +55,59 @@
     .history-baki{color:#ff4757; font-weight:bold;} 
     .history-joma{color:#1dd1a1; font-weight:bold;}
     .history-note{font-size:11px; color:#666; text-align:center; padding:5px;}
+    .loading{text-align:center; color:white; padding:20px; font-size:14px;}
   </style>
 </head>
 <body>
 
 <div class="container">
-  <div class="header"><img src="logo.png"><h2 id="shopName">আমার দোকান</h2><button onclick="logout()">Logout</button></div>
-
-  <div class="card">
-    <h3>নতুন কাস্টমার এড</h3>
-    <input type="text" id="custName" placeholder="কাস্টমারের নাম">
-    <input type="tel" id="custPhone" placeholder="মোবাইল নাম্বার 01XXXXXXXXX">
-    <button class="btn btn-add" onclick="addCustomer()">কাস্টমার এড করুন</button>
-  </div>
-
-  <div class="card">
-    <h3>নতুন লেনদেন</h3>
-    <select id="custSelect"><option>কাস্টমার সিলেক্ট করুন</option></select>
-    <input type="number" id="amount" placeholder="টাকার পরিমাণ">
-    <div class="btn-group">
-      <button id="btnBaki" class="btn btn-baki btn-select" onclick="selectType('baki')">বাকি +</button>
-      <button id="btnJoma" class="btn btn-joma btn-select" onclick="selectType('joma')">জমা -</button>
+  <div id="loading" class="loading">লোড হচ্ছে...</div>
+  
+  <div id="appContent" style="display:none;">
+    <div class="header">
+      <img src="logo.png" onerror="this.style.display='none'">
+      <h2 id="shopName">Smart Dokan Khata</h2>
+      <button onclick="logout()">Logout</button>
     </div>
-    <button class="btn btn-confirm" onclick="confirmTransaction()">✅ কনফার্ম করুন</button>
-  </div>
 
-  <div class="card">
-    <h3>মোট হিসাব</h3>
-    <div class="summary">
-      <div class="summary-box"><h4>মোট বাকি</h4><p id="totalBaki">0 টাকা</p></div>
-      <div class="summary-box"><h4>মোট জমা</h4><p id="totalJoma">0 টাকা</p></div>
+    <div class="card">
+      <h3>নতুন কাস্টমার এড</h3>
+      <input type="text" id="custName" placeholder="কাস্টমারের নাম">
+      <input type="tel" id="custPhone" placeholder="মোবাইল নাম্বার 01XXXXXXXXX">
+      <button class="btn btn-add" onclick="addCustomer()">কাস্টমার এড করুন</button>
     </div>
-  </div>
 
-  <div class="card">
-    <h3>সকল কাস্টমার</h3>
-    <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="নাম বা নাম্বার দিয়ে সার্চ করুন..." onkeyup="searchCustomer()"></div>
-    <div id="customerList" class="customer-list">কোনো কাস্টমার নাই</div>
-  </div>
+    <div class="card">
+      <h3>নতুন লেনদেন</h3>
+      <select id="custSelect"><option>কাস্টমার সিলেক্ট করুন</option></select>
+      <input type="number" id="amount" placeholder="টাকার পরিমাণ">
+      <div class="btn-group">
+        <button id="btnBaki" class="btn btn-baki btn-select" onclick="selectType('baki')">বাকি +</button>
+        <button id="btnJoma" class="btn btn-joma btn-select" onclick="selectType('joma')">জমা -</button>
+      </div>
+      <button class="btn btn-confirm" onclick="confirmTransaction()">✅ কনফার্ম করুন</button>
+    </div>
 
-  <!-- সাম্প্রতিক লেনদেন - 5 টা + সার্চ -->
-  <div class="card">
-    <h3>সাম্প্রতিক লেনদেন</h3>
-    <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="historySearch" placeholder="নাম বা নাম্বার লিখে সার্চ করুন..." onkeyup="searchHistory()"></div>
-    <div id="transactionHistory">কোনো লেনদেন নাই</div>
-    <div class="history-note">নোট: শুধু লাস্ট 5 টি দেখানো হচ্ছে। সার্চ করে পুরাতন গুলো দেখুন</div>
+    <div class="card">
+      <h3>মোট হিসাব</h3>
+      <div class="summary">
+        <div class="summary-box"><h4>মোট বাকি</h4><p id="totalBaki">0 টাকা</p></div>
+        <div class="summary-box"><h4>মোট জমা</h4><p id="totalJoma">0 টাকা</p></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>সকল কাস্টমার</h3>
+      <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="নাম বা নাম্বার দিয়ে সার্চ করুন..." onkeyup="searchCustomer()"></div>
+      <div id="customerList" class="customer-list">কোনো কাস্টমার নাই</div>
+    </div>
+
+    <div class="card">
+      <h3>সাম্প্রতিক লেনদেন</h3>
+      <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="historySearch" placeholder="নাম বা নাম্বার লিখে সার্চ করুন..." onkeyup="searchHistory()"></div>
+      <div id="transactionHistory">কোনো লেনদেন নাই</div>
+      <div class="history-note">নোট: শুধু লাস্ট 5 টি দেখানো হচ্ছে। সার্চ করে পুরাতন গুলো দেখুন</div>
+    </div>
   </div>
 
 </div>
@@ -105,21 +115,30 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, query, where, doc, setDoc, updateDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, query, where, doc, updateDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const app = initializeApp({apiKey: "AIzaSyBdbroawwWdIX6CgQJFFv4Kk3oXAgnc_ak", authDomain: "smart-dokan-khata.firebaseapp.com", projectId: "smart-dokan-khata"});
   const auth = getAuth(app); const db = getFirestore(app);
   let userId = null; let customers = []; let selectedType = null; let allTransactions = [];
   const days = ["রবিবার", "সোমবার", "মঙ্গলবার", "বুধবার", "বৃহস্পতিবার", "শুক্রবার", "শনিবার"];
 
-  onAuthStateChanged(auth, (user) => { if (user) { userId = user.uid; loadData(); } else { window.location.href = "index.html"; } });
+  onAuthStateChanged(auth, (user) => { 
+    if (user) { 
+      userId = user.uid; 
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('appContent').style.display = 'block';
+      loadData(); 
+    } else { 
+      window.location.href = "index.html"; 
+    } 
+  });
   window.logout = () => signOut(auth);
 
   window.addCustomer = async () => {
-    const name = document.getElementById('custName').value;
-    const phone = document.getElementById('custPhone').value;
+    const name = document.getElementById('custName').value.trim();
+    const phone = document.getElementById('custPhone').value.trim();
     if(!name || !phone) return alert("নাম ও নাম্বার দিন");
-    await addDoc(collection(db, "customers"), {userId, name, phone, balance: 0});
+    await addDoc(collection(db, "customers"), {userId, name, phone, balance: 0, createdAt: new Date()});
     document.getElementById('custName').value = ""; document.getElementById('custPhone').value = ""; loadData();
   }
 
@@ -161,11 +180,10 @@
     displayCustomers(filtered);
   }
 
-  // নতুন: হিস্টোরি সার্চ
   window.searchHistory = () => {
     const searchTerm = document.getElementById('historySearch').value.toLowerCase();
     if(searchTerm === ""){
-      displayHistory(allTransactions.slice(0,5)); // খালি থাকলে 5টা
+      displayHistory(allTransactions.slice(0,5));
       return;
     }
     const filtered = allTransactions.filter(t => {
@@ -232,8 +250,8 @@
     select.innerHTML = "<option>কাস্টমার সিলেক্ট করুন</option>"; 
     let totalBaki = 0;
 
-    custSnap.forEach(doc => {
-      const c = {id: doc.id, ...doc.data()}; customers.push(c);
+    custSnap.forEach(docSnap => {
+      const c = {id: docSnap.id, ...docSnap.data()}; customers.push(c);
       select.innerHTML += `<option value="${c.id}">${c.name} - ${c.phone}</option>`;
       if(c.balance > 0) totalBaki += c.balance;
     });
@@ -242,8 +260,8 @@
     const transSnap = await getDocs(query(collection(db, "transactions"), where("userId", "==", userId)));
     let totalJoma = 0; allTransactions = [];
     
-    transSnap.forEach(doc => {
-      const t = {id: doc.id, ...doc.data()};
+    transSnap.forEach(docSnap => {
+      const t = {id: docSnap.id, ...docSnap.data()};
       if(t.type === 'joma') totalJoma += t.amount;
       allTransactions.push(t);
     });
@@ -254,7 +272,7 @@
       return dateB - dateA;
     });
 
-    displayHistory(allTransactions.slice(0,5)); // শুধু 5টা
+    displayHistory(allTransactions.slice(0,5));
 
     document.getElementById('totalBaki').innerText = totalBaki + " টাকা";
     document.getElementById('totalJoma').innerText = totalJoma + " টাকা";
