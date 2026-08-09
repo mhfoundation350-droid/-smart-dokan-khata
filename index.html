@@ -1,26 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="bn">
 <head>
   <title>Smart Dokan Khata - Login</title>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body{font-family: Arial; display:flex; justify-content:center; align-items:center; height:100vh; background:#f2f2f2; margin:0;}
-    .box{background:white; padding:30px; border-radius:10px; box-shadow:0 0 10px #ccc; width:90%; max-width:350px; text-align:center;}
-    h2{color:#4CAF50; margin-top:10px;}
-    input{width:100%; padding:12px; margin:8px 0; border:1px solid #ddd; border-radius:5px; box-sizing:border-box; font-size:16px;}
-    button{width:100%; padding:12px; background:#4CAF50; color:white; border:none; border-radius:5px; cursor:pointer; margin:5px 0; font-size:16px;}
-    button:hover{background:#45a049;}
-    #msg{color:red; margin-top:10px; font-size:14px;}
+    body{font-family: 'SolaimanLipi', Arial, sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin:0;}
+    .box{background:white; padding:25px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.2); width:90%; max-width:350px; text-align:center;}
+    .box img{width:80px; margin-bottom:10px; border-radius:10px;}
+    h2{color:#667eea; margin:5px 0 15px 0; font-size:20px;}
+    input{width:100%; padding:12px; margin:8px 0; border:1px solid #ddd; border-radius:6px; box-sizing:border-box; font-size:15px; font-family: inherit;}
+    input:focus{border-color:#667eea; outline:none;}
+    button{width:100%; padding:12px; background:#667eea; color:white; border:none; border-radius:6px; cursor:pointer; margin:6px 0; font-size:15px; font-weight:bold; font-family: inherit;}
+    button:hover{background:#5563d1;}
+    .btn-register{background:#1dd1a1;}
+    .btn-register:hover{background:#17b18d;}
+    #msg{color:#ff4757; margin-top:10px; font-size:13px; min-height:18px;}
   </style>
 </head>
 <body>
 
 <div class="box">
-  <img src="logo.png" alt="Logo" style="width:120px; margin-bottom:10px;">
+  <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
   <h2>Smart Dokan Khata</h2>
   <input type="email" id="email" placeholder="ইমেইল দিন">
   <input type="password" id="password" placeholder="পাসওয়ার্ড দিন">
-  <button onclick="register()">নতুন একাউন্ট</button>
+  <button class="btn-register" onclick="register()">নতুন একাউন্ট</button>
   <button onclick="login()">লগইন</button>
   <p id="msg"></p>
 </div>
@@ -32,10 +37,7 @@
   const firebaseConfig = {
     apiKey: "AIzaSyBdbroawwWdIX6CgQJFFv4Kk3oXAgnc_ak",
     authDomain: "smart-dokan-khata.firebaseapp.com",
-    projectId: "smart-dokan-khata",
-    storageBucket: "smart-dokan-khata.firebasestorage.app",
-    messagingSenderId: "941938264732",
-    appId: "1:941938264732:web:6f1ddb88c0d8df480dfb59"
+    projectId: "smart-dokan-khata"
   };
 
   const app = initializeApp(firebaseConfig);
@@ -46,19 +48,27 @@
   }
 
   window.register = () => {
-    const email = document.getElementById('email').value;
+    const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
+    const msg = document.getElementById('msg');
+    if(!email || !password) return msg.innerText = "ইমেইল ও পাসওয়ার্ড দিন";
+    
+    msg.innerText = "একাউন্ট তৈরি হচ্ছে...";
     createUserWithEmailAndPassword(auth, email, password)
       .then(() => goToDashboard())
-      .catch((error) => document.getElementById('msg').innerText = "Error: " + error.message);
+      .catch((error) => msg.innerText = "Error: " + error.message);
   }
 
   window.login = () => {
-    const email = document.getElementById('email').value;
+    const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
+    const msg = document.getElementById('msg');
+    if(!email || !password) return msg.innerText = "ইমেইল ও পাসওয়ার্ড দিন";
+
+    msg.innerText = "লগইন হচ্ছে...";
     signInWithEmailAndPassword(auth, email, password)
       .then(() => goToDashboard())
-      .catch((error) => document.getElementById('msg').innerText = "Error: " + error.message);
+      .catch((error) => msg.innerText = "Error: " + error.message);
   }
 </script>
 
