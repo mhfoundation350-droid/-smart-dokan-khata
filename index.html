@@ -4,6 +4,11 @@
   <title>Smart Dokan Khata - Login</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- PWA এর জন্য নতুন 2টা লাইন -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#667eea">
+
   <style>
     body{font-family: 'SolaimanLipi', Arial, sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin:0;}
     .box{background:white; padding:25px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.2); width:90%; max-width:350px; text-align:center;}
@@ -70,6 +75,27 @@
       .then(() => goToDashboard())
       .catch((error) => msg.innerText = "Error: " + error.message);
   }
+</script>
+
+<!-- PWA + Install Popup এর জন্য নতুন Script -->
+<script>
+  // Service Worker Register
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('sw.js');
+  }
+
+  // Install App Popup
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // 3 সেকেন্ড পর পপআপ আসবে
+    setTimeout(() => {
+      if(confirm("📱 স্মার্ট দোকান খাতা অ্যাপ ইনস্টল করুন?\nএক ক্লিকে হোম স্ক্রিনে পেয়ে যাবেন")){
+        deferredPrompt.prompt();
+      }
+    }, 3000);
+  });
 </script>
 
 </body>
