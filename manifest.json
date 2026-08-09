@@ -1,0 +1,15 @@
+{
+  "name": "স্মার্ট দোকান খাতা",
+  "short_name": "দোকান খাতা",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#FF5722",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
