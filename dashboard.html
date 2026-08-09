@@ -5,6 +5,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#667eea">
+
+  <!-- PWA এর জন্য নতুন লাইন -->
+  <link rel="manifest" href="manifest.json">
+  
   <style>
     *{box-sizing:border-box;}
     body{font-family: 'SolaimanLipi', Arial, sans-serif; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin:0; padding:8px; min-height:100vh;}
@@ -278,5 +282,27 @@
     document.getElementById('totalJoma').innerText = totalJoma + " টাকা";
   }
 </script>
+
+<!-- PWA + Install Popup এর জন্য নতুন Script -->
+<script>
+  // Service Worker Register
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('sw.js');
+  }
+
+  // Install App Popup
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // 3 সেকেন্ড পর পপআপ আসবে
+    setTimeout(() => {
+      if(confirm("📱 স্মার্ট দোকান খাতা অ্যাপ ইনস্টল করুন?\nএক ক্লিকে হোম স্ক্রিনে পেয়ে যাবেন")){
+        deferredPrompt.prompt();
+      }
+    }, 3000);
+  });
+</script>
+
 </body>
 </html>
