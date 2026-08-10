@@ -93,10 +93,10 @@
 <div id="appContent" style="display:none;">
   <!-- Top Bar -->
   <div class="top-bar">
-    <div class="shop-name"><i class="fa-solid fa-crown"></i> <span id="shopName">আমার দোকান</span> <i class="fa-solid fa-angle-down"></i></div>
+    <div class="shop-name" onclick="window.location.href='menu.html'"><i class="fa-solid fa-crown"></i> <span id="shopName">আমার দোকান</span> <i class="fa-solid fa-angle-down"></i></div> <!-- এখানে menu তে লিংক -->
     <div class="top-icons">
       <i class="fa-solid fa-inbox"><span class="badge">1</span></i>
-      <i class="fa-solid fa-headset" onclick="openSupport()"></i> <!-- এখানে onclick এড -->
+      <i class="fa-solid fa-headset" onclick="openSupport()"></i>
       <i class="fa-solid fa-right-from-bracket" onclick="logout()"></i>
     </div>
   </div>
@@ -191,16 +191,30 @@
       document.getElementById('loading').style.display = 'none';
       document.getElementById('appContent').style.display = 'block';
       loadData();
+      loadShopName(); // <-- নতুন এড করা
     } else {
       window.location.href = "index.html";
     }
   });
   window.logout = () => signOut(auth);
 
+  // ===== নতুন: দোকানের নাম Firebase থেকে লোড =====
+  async function loadShopName() {
+    const docRef = doc(db, "users", userId);
+    const docSnap = await getDoc(docRef);
+    let shopName = "আমার দোকান";
+    if(docSnap.exists() && docSnap.data().shopName){
+      shopName = docSnap.data().shopName;
+    } else {
+      shopName = localStorage.getItem("shopName") || "আমার দোকান";
+    }
+    document.getElementById('shopName').innerText = shopName;
+  }
+
   // ===== নতুন: WhatsApp সাপোর্ট =====
   window.openSupport = () => {
     const msg = "আসালামু আলাইকুম ভাই\nআমি Smart Dokan Khata অ্যাপ থেকে মেসেজ দিলাম। আমার একটু হেল্প লাগবে।";
-    const supportNumber = "8801645444350"; // আপনার নাম্বার
+    const supportNumber = "8801645444350";
     window.open(`https://wa.me/${supportNumber}?text=${encodeURIComponent(msg)}`);
   }
 
@@ -228,7 +242,8 @@
     window.open(qrUrl, '_blank');
   }
   window.backup = () => {
-    const data = {customers, transactions: allTransactions, date: new Date()};
+    const shopName = document.getElementById('shopName').innerText;
+    const data = {shopName, customers, transactions: allTransactions, date: new Date()};
     const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -237,10 +252,11 @@
   }
   window.taliMessage = () => {
     const dueCustomers = customers.filter(c => c.balance > 0);
+    const shopName = document.getElementById('shopName').innerText;
     if(dueCustomers.length === 0) return alert("কারো বাকি নাই");
-    let msg = "আসসালামু আলাইকুম\nআপনার বাকির হিসাব:\n\n";
+    let msg = `আসালামু আলাইকুম\n${shopName} থেকে বলছি\nআপনার বাকির হিসাব:\n\n`;
     dueCustomers.forEach(c => msg += `${c.name}: ${c.balance} টাকা\n`);
-    msg += "\nধন্যবাদ - আমার দোকান";
+    msg += "\nধন্যবাদ";
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
   }
   window.cashbox = () => window.location.href = "cashbox.html";
