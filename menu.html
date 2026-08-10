@@ -10,7 +10,7 @@
     *{box-sizing:border-box;}
     body{font-family: 'SolaimanLipi', Arial, sans-serif; background:#f5f5f5; margin:0; padding:0; padding-bottom:70px;}
     
-    .top-bar{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; padding:12px 15px; display:flex; align-items:center; gap:10px; position:sticky; top:0;}
+    .top-bar{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; padding:12px 15px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:100;}
     .top-bar i{font-size:20px; cursor:pointer;}
     .top-bar h2{margin:0; font-size:16px; flex:1;}
     
@@ -28,7 +28,7 @@
     .logout{color:#ff4757!important;}
     .logout i{color:#ff4757!important;}
     
-    .bottom-nav{position:fixed; bottom:0; left:0; right:0; background:white; display:flex; justify-content:space-around; padding:8px 0; box-shadow:0 -2px 10px rgba(0,0,0,0.1);}
+    .bottom-nav{position:fixed; bottom:0; left:0; right:0; background:white; display:flex; justify-content:space-around; padding:8px 0; box-shadow:0 -2px 10px rgba(0,0,0,0.1); z-index:100;}
     .nav-item{text-align:center; color:#888; font-size:11px; cursor:pointer;}
     .nav-item.active{color:#667eea;}
     .nav-item i{font-size:20px; display:block; margin-bottom:3px;}
@@ -63,7 +63,7 @@
       <i class="fa-solid fa-cloud-arrow-up" style="color:#3498DB;"></i>
       <span>ডাটা ব্যাকআপ</span>
     </div>
-    <div class="menu-item" onclick="settings()">
+    <div class="menu-item" onclick="window.location.href='settings.html'"> <!-- এখানে লিংক -->
       <i class="fa-solid fa-gear" style="color:#7F8C8D;"></i>
       <span>সেটিংস</span>
     </div>
@@ -103,7 +103,7 @@
     }
   });
 
-  // Profile Load
+  // Profile Load + Dashboard এ নাম আপডেট
   async function loadProfile(user) {
     const docRef = doc(db, "users", userId);
     const docSnap = await getDoc(docRef);
@@ -114,24 +114,33 @@
     document.getElementById('shopName').innerText = shopName;
     document.getElementById('userPhone').innerText = user.phoneNumber || user.email || "";
     document.getElementById('avatar').innerText = shopName.charAt(0);
+    
+    // Dashboard এর নামও আপডেট করে দাও
+    if(window.opener && window.opener.document.getElementById('shopName')){
+      window.opener.document.getElementById('shopName').innerText = shopName;
+    }
+    localStorage.setItem("shopName", shopName);
   }
 
-  // Edit Profile - দোকানের নাম চেঞ্জ
+  // Edit Profile - দোকানের নাম চেঞ্জ + Firebase + LocalStorage
   window.editProfile = async () => {
     const newName = prompt("আপনার দোকানের নাম লিখুন:", document.getElementById('shopName').innerText);
     if(newName && newName.trim() !== ""){
       await setDoc(doc(db, "users", userId), {shopName: newName}, {merge: true});
       document.getElementById('shopName').innerText = newName;
       document.getElementById('avatar').innerText = newName.charAt(0);
+      localStorage.setItem("shopName", newName);
       alert("দোকানের নাম আপডেট হয়েছে");
+      // Dashboard রিলোড করলে নাম চেঞ্জ হবে
+      if(confirm("Dashboard এ নাম আপডেট করতে রিলোড করবেন?")) window.location.href = "dashboard.html";
     }
   }
 
   // Menu Functions
-  window.buyPro = () => alert("Smart Khata Pro - মাসিক 99 টাকা\nআনলিমিটেড দোকান + PDF রিপোর্ট\nখুব শীগ্রই আসছে");
+  window.buyPro = () => alert("Smart Khata Pro - মাসিক 99 টাকা\nআনলিমিটেড দোকান + PDF রিপোর্ট + বিজ্ঞাপন ছাড়া\nখুব শীগ্রই আসছে");
   
   window.downloadPDF = () => {
-    alert("PDF রিপোর্ট - Pro ফিচার\nআপনার মাসিক লেনদেন PDF করে ডাউনলোড হবে");
+    alert("PDF রিপোর্ট - Pro ফিচার\nখুব শীগ্রই আপনার মাসিক লেনদেন PDF করে ডাউনলোড হবে");
   }
   
   window.backupData = async () => {
@@ -139,10 +148,10 @@
     const custSnap = await getDocs(query(collection(db, "customers"), where("userId", "==", userId)));
     const transSnap = await getDocs(query(collection(db, "transactions"), where("userId", "==", userId)));
     let customers = []; let transactions = [];
-    custSnap.forEach(d => customers.push(d.data()));
-    transSnap.forEach(d => transactions.push(d.data()));
+    custSnap.forEach(d => customers.push({id: d.id, ...d.data()}));
+    transSnap.forEach(d => transactions.push({id: d.id, ...d.data()}));
     
-    const data = {customers, transactions, date: new Date()};
+    const data = {shopName: localStorage.getItem("shopName"), customers, transactions, backupDate: new Date()};
     const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -150,12 +159,11 @@
     alert("ব্যাকআপ ডাউনলোড হয়েছে");
   }
   
-  window.settings = () => alert("সেটিংস পেজ - খুব শীগ্রই আসছে");
-  
   window.shareApp = () => {
-    const text = "আমি Smart Dokan Khata অ্যাপ ব্যবহার করি। আপনার দোকানের হিসাব রাখতে এটা বেস্ট।";
+    const shopName = localStorage.getItem("shopName") || "আমার দোকান";
+    const text = `আমি ${shopName} থেকে Smart Dokan Khata অ্যাপ ব্যবহার করি। আপনার দোকানের হিসাব রাখতে এটা বেস্ট।`;
     if(navigator.share){
-      navigator.share({title: 'Smart Dokan Khata', text: text, url: window.location.origin});
+      navigator.share({title: 'Smart Dokan Khata', text: text});
     } else {
       window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
     }
