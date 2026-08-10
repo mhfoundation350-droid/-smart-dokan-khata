@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <title>ক্যাশবক্স - Smart Dokan Khata</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    *{box-sizing:border-box;} body{font-family: 'SolaimanLipi'; background:#f5f5f5; margin:0; padding-bottom:70px;}
+   .top-bar{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; padding:12px 15px; display:flex; align-items:center; gap:10px;}
+   .top-bar i{font-size:20px; cursor:pointer;}.top-bar h2{margin:0; font-size:16px; flex:1;}
+   .container{max-width:600px; margin:auto; padding:10px;}
+   .summary{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+   .box{background:white; padding:15px; border-radius:10px; text-align:center;}
+   .box h4{margin:0; color:#666; font-size:12px;}.box p{margin:5px 0; font-size:18px; font-weight:bold;}
+   .in{color:#1dd1a1;}.out{color:#ff4757;}
+   .bottom-nav{position:fixed; bottom:0; left:0; right:0; background:white; display:flex; justify-content:space-around; padding:8px 0; box-shadow:0 -2px 10px rgba(0,0,0,0.1);}
+   .nav-item{text-align:center; color:#888; font-size:11px; cursor:pointer;}
+   .nav-item.active{color:#667eea;}.nav-item i{font-size:20px; display:block; margin-bottom:3px;}
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <i class="fa-solid fa-arrow-left" onclick="window.location.href='dashboard.html'"></i>
+    <h2>ক্যাশবক্স</h2>
+  </div>
+  <div class="container">
+    <div class="summary">
+      <div class="box"><h4>মোট জমা</h4><p class="in" id="totalIn">0 টাকা</p></div>
+      <div class="box"><h4>মোট খরচ</h4><p class="out" id="totalOut">0 টাকা</p></div>
+    </div>
+    <div class="box" style="margin-top:10px;"><h4>হাতে ক্যাশ</h4><p id="cashInHand">0 টাকা</p></div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="window.location.href='dashboard.html'"><i class="fa-solid fa-book"></i>টালি</div>
+    <div class="nav-item active"><i class="fa-solid fa-wallet"></i>ক্যাশবক্স</div>
+    <div class="nav-item" onclick="window.location.href='wallet.html'"><i class="fa-solid fa-credit-card"></i>ওয়ালেট</div>
+    <div class="nav-item" onclick="window.location.href='menu.html'"><i class="fa-solid fa-bars"></i>মেনু</div>
+  </div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, getDocs, query, collection, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    const app = initializeApp({apiKey: "AIzaSyBdbroawwWdIX6CgQJFFv4Kk3oXAgnc_ak", authDomain: "smart-dokan-khata.firebaseapp.com", projectId: "smart-dokan-khata"});
+    const auth = getAuth(app); const db = getFirestore(app);
+    onAuthStateChanged(auth, (user) => { if (user) { loadCash(user.uid); } else { window.location.href = "index.html"; } });
+
+    async function loadCash(uid){
+      const snap = await getDocs(query(collection(db, "transactions"), where("userId", "==", uid)));
+      let totalIn = 0, totalOut = 0;
+      snap.forEach(doc => { const t = doc.data(); if(t.type === 'joma') totalIn += t.amount; else totalOut += t.amount; });
+      document.getElementById('totalIn').innerText = totalIn + " টাকা";
+      document.getElementById('totalOut').innerText = totalOut + " টাকা";
+      document.getElementById('cashInHand').innerText = (totalIn - totalOut) + " টাকা";
+    }
+  </script>
+</body>
+</html>
