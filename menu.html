@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <title>মেনু - Smart Dokan Khata</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    *{box-sizing:border-box;} body{font-family: 'SolaimanLipi'; background:#f5f5f5; margin:0; padding-bottom:70px;}
+  .top-bar{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; padding:12px 15px; display:flex; align-items:center; gap:10px;}
+  .top-bar i{font-size:20px; cursor:pointer;}.top-bar h2{margin:0; font-size:16px; flex:1;}
+  .container{max-width:600px; margin:auto; padding:10px;}
+  .profile{background:white; padding:15px; border-radius:10px; display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+  .avatar{width:50px; height:50px; background:gold; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:bold;}
+  .menu-item{background:white; padding:12px 15px; display:flex; align-items:center; gap:12px; margin-bottom:5px; border-radius:8px; cursor:pointer;}
+  .menu-item i{width:20px; color:#667eea;}
+  .logout{color:#ff4757!important;}
+  .bottom-nav{position:fixed; bottom:0; left:0; right:0; background:white; display:flex; justify-content:space-around; padding:8px 0; box-shadow:0 -2px 10px rgba(0,0,0,0.1);}
+  .nav-item{text-align:center; color:#888; font-size:11px; cursor:pointer;}
+  .nav-item.active{color:#667eea;}.nav-item i{font-size:20px; display:block; margin-bottom:3px;}
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <i class="fa-solid fa-arrow-left" onclick="window.location.href='dashboard.html'"></i>
+    <h2>মেনু</h2>
+  </div>
+  <div class="container">
+    <div class="profile">
+      <div class="avatar">আ</div>
+      <div><b>আমার দোকান</b><br><small>+8801XXXXXXXXX</small></div>
+    </div>
+    <div class="menu-item" onclick="alert('প্রো ফিচার')"><i class="fa-solid fa-crown"></i> Smart Khata Pro কিনুন</div>
+    <div class="menu-item" onclick="alert('রিপোর্ট ডাউনলোড')"><i class="fa-solid fa-file-pdf"></i> PDF রিপোর্ট</div>
+    <div class="menu-item" onclick="alert('ব্যাকআপ')"><i class="fa-solid fa-cloud-arrow-up"></i> ডাটা ব্যাকআপ</div>
+    <div class="menu-item" onclick="alert('সেটিংস')"><i class="fa-solid fa-gear"></i> সেটিংস</div>
+    <div class="menu-item" onclick="alert('শেয়ার')"><i class="fa-solid fa-share-nodes"></i> অ্যাপ শেয়ার করুন</div>
+    <div class="menu-item logout" onclick="signOut()"><i class="fa-solid fa-right-from-bracket"></i> Logout</div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="window.location.href='dashboard.html'"><i class="fa-solid fa-book"></i>টালি</div>
+    <div class="nav-item" onclick="window.location.href='cashbox.html'"><i class="fa-solid fa-wallet"></i>ক্যাশবক্স</div>
+    <div class="nav-item" onclick="window.location.href='wallet.html'"><i class="fa-solid fa-credit-card"></i>ওয়ালেট</div>
+    <div class="nav-item active"><i class="fa-solid fa-bars"></i>মেনু</div>
+  </div>
+  <script type="module">
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    const app = initializeApp({apiKey: "AIzaSyBdbroawwWdIX6CgQJFFv4Kk3oXAgnc_ak", authDomain: "smart-dokan-khata.firebaseapp.com", projectId: "smart-dokan-khata"});
+    const auth = getAuth(app);
+    window.signOut = () => { signOut(auth).then(() => window.location.href = "index.html"); }
+  </script>
+</body>
+</html>
