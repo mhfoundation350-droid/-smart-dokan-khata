@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <title>স্টক হিসাব - Smart Dokan Khata</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#667eea">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    *{box-sizing:border-box;}
+    body{font-family: 'SolaimanLipi', Arial, sans-serif; background:#f5f5f5; margin:0; padding:0; padding-bottom:70px;}
+   .top-bar{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; padding:12px 15px; display:flex; align-items:center; gap:10px;}
+   .top-bar i{font-size:20px; cursor:pointer;}
+   .top-bar h2{margin:0; font-size:16px; flex:1;}
+   .container{max-width:600px; margin:auto; padding:10px;}
+   .card{background:white; padding:10px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1); margin-bottom:8px;}
+    input{width:100%; padding:8px; margin:5px 0; border:1px solid #ccc; border-radius:5px; font-size:13px;}
+   .btn{background:#667eea; color:white; border:none; padding:8px; border-radius:5px; width:100%; font-weight:bold; cursor:pointer;}
+   .product{display:flex; justify-content:space-between; background:#f1f2f6; padding:8px; border-radius:6px; margin:5px 0;}
+   .btn-add-float{position:fixed; bottom:80px; right:15px; background:#ff4757; color:white; border:none; padding:12px 16px; border-radius:25px; font-weight:bold; cursor:pointer;}
+   .bottom-nav{position:fixed; bottom:0; left:0; right:0; background:white; display:flex; justify-content:space-around; padding:8px 0; box-shadow:0 -2px 10px rgba(0,0,0,0.1);}
+   .nav-item{text-align:center; color:#888; font-size:11px; cursor:pointer;}
+   .nav-item.active{color:#667eea;}
+   .nav-item i{font-size:20px; display:block; margin-bottom:3px;}
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <i class="fa-solid fa-arrow-left" onclick="window.location.href='dashboard.html'"></i>
+    <h2>স্টক হিসাব</h2>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h3>নতুন প্রোডাক্ট এড</h3>
+      <input type="text" id="pName" placeholder="প্রোডাক্টের নাম">
+      <input type="number" id="pQty" placeholder="পরিমাণ">
+      <input type="number" id="pPrice" placeholder="ক্রয় মূল্য">
+      <button class="btn" onclick="addProduct()">প্রোডাক্ট এড করুন</button>
+    </div>
+    <div class="card">
+      <h3>সকল প্রোডাক্ট</h3>
+      <div id="productList">কোনো প্রোডাক্ট নাই</div>
+    </div>
+  </div>
+
+  <button class="btn-add-float" onclick="document.getElementById('pName').focus()"><i class="fa-solid fa-plus"></i> নতুন</button>
+
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="window.location.href='dashboard.html'"><i class="fa-solid fa-book"></i>টালি</div>
+    <div class="nav-item" onclick="window.location.href='cashbox.html'"><i class="fa-solid fa-wallet"></i>ক্যাশবক্স</div>
+    <div class="nav-item" onclick="window.location.href='wallet.html'"><i class="fa-solid fa-credit-card"></i>ওয়ালেট</div>
+    <div class="nav-item" onclick="window.location.href='menu.html'"><i class="fa-solid fa-bars"></i>মেনু</div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    const app = initializeApp({apiKey: "AIzaSyBdbroawwWdIX6CgQJFFv4Kk3oXAgnc_ak", authDomain: "smart-dokan-khata.firebaseapp.com", projectId: "smart-dokan-khata"});
+    const auth = getAuth(app); const db = getFirestore(app); let userId = null;
+
+    onAuthStateChanged(auth, (user) => { if (user) { userId = user.uid; loadProducts(); } else { window.location.href = "index.html"; } });
+
+    window.addProduct = async () => {
+      const name = document.getElementById('pName').value.trim();
+      const qty = Number(document.getElementById('pQty').value);
+      const price = Number(document.getElementById('pPrice').value);
+      if(!name ||!qty) return alert("নাম ও পরিমাণ দিন");
+      await addDoc(collection(db, "products"), {userId, name, qty, price, createdAt: new Date()});
+      document.getElementById('pName').value = ""; document.getElementById('pQty').value = ""; document.getElementById('pPrice').value = ""; loadProducts();
+    }
+
+    async function loadProducts(){
+      const snap = await getDocs(query(collection(db, "products"), where("userId", "==", userId)));
+      let html = "";
+      snap.forEach(doc => {
+        const p = doc.data();
+        html += `<div class="product"><div><b>${p.name}</b><br><small>দাম: ${p.price} টাকা</small></div><div><b>${p.qty} পিস</b></div></div>`;
+      });
+      document.getElementById('productList').innerHTML = html || "কোনো প্রোডাক্ট নাই";
+    }
+  </script>
+</body>
+</html>
