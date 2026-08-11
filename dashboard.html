@@ -232,7 +232,6 @@
     alert("ব্যাকআপ ডাউনলোড হয়েছে");
   }
   
-  // আপডেটেড টালি-মেসেজ
   window.taliMessage = () => {
     const dueCustomers = customers.filter(c => c.balance > 0);
     const shopName = document.getElementById('shopName').innerText;
@@ -318,7 +317,19 @@
     return `${date} - ${day} - ${time}`;
   }
 
-  // ===== ফাইনাল: বাকি সহ WhatsApp মেসেজ =====
+  // ===== ফাইনাল ফিক্স: ডাবল 88 এর সমস্যা + পার্সোনাল মেসেজ =====
+  function formatBDNumber(num) {
+    let phone = num.replace(/\D/g, ''); 
+    if(phone.startsWith('880')) return phone; // আগে থেকেই 880 থাকলে
+    if(phone.startsWith('0')) { 
+      return '88' + phone.substring(1); // 017... -> 88017...
+    } else if(phone.startsWith('1') && phone.length === 10){ 
+      return '88' + phone; // 171... -> 880171...
+    } else { 
+      return '88' + phone;
+    }
+  }
+
   function displayCustomers(custList) {
     const list = document.getElementById('customerList'); list.innerHTML = "";
     const shopName = document.getElementById('shopName').innerText;
@@ -342,23 +353,16 @@
         statusText = `আপনার জমা আছে: ${Math.abs(c.balance)} টাকা`;
       }
 
-      // BD নাম্বার ফরমেট 01XXXXXXXXX -> 8801XXXXXXXXX
-      let phone = c.phone.replace(/\D/g, ''); 
-      if(phone.startsWith('0')) { 
-        phone = '88' + phone.substring(1);
-      } else if(phone.startsWith('1') && phone.length === 10){ 
-        phone = '88' + phone;
-      } else if(!phone.startsWith('88')) { 
-        phone = '88' + phone;
-      }
+      // ফরমেট করা নাম্বার
+      const formattedPhone = formatBDNumber(c.phone);
       
       // পার্সোনাল মেসেজ
-      let message = `আসালামু আলাইকুম ${c.name} ভাই\n\n`;
+      let message = `আসালামু আলাইকুম ${c.name} ভাই\n`;
       message += `${shopName} থেকে বলছি\n`;
       message += `${statusText}\n`;
       message += `দয়া করে পরিশোধ করে দিয়েন। ধন্যবাদ 🙏`;
       
-      const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+      const waLink = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
 
       list.innerHTML += `
         <div class="customer-card">
