@@ -156,7 +156,8 @@
     <i class="fa-solid fa-xmark" onclick="closePopup()"></i>
   </div>
   <input type="text" id="custName" placeholder="কাস্টমারের নাম">
-  <input type="tel" id="custPhone" placeholder="মোবাইল নাম্বার 01XXXXXXXXX">
+  <!-- এখানে +88 ডিফল্ট করা হলো -->
+  <input type="tel" id="custPhone" placeholder="মোবাইল নাম্বার" value="+88">
   <button class="btn btn-add" onclick="addCustomer()">কাস্টমার এড করুন</button>
 </div>
 
@@ -204,6 +205,7 @@
   window.openPopup = () => {
     document.getElementById('overlay').classList.add('show');
     document.getElementById('popup').classList.add('show');
+    document.getElementById('custPhone').value = "+88"; // পপআপ ওপেন হলে +88 সেট হবে
   }
   window.closePopup = () => {
     document.getElementById('overlay').classList.remove('show');
@@ -250,12 +252,17 @@
     window.location.href = pages[index];
   }
 
+  // আপডেট: +88 বাদ দিয়ে সেভ হবে
   window.addCustomer = async () => {
     const name = document.getElementById('custName').value.trim();
-    const phone = document.getElementById('custPhone').value.trim();
+    let phone = document.getElementById('custPhone').value.trim();
     if(!name ||!phone) return alert("নাম ও নাম্বার দিন");
+    
+    phone = phone.replace('+', ''); // + বাদ দিয়ে DB তে সেভ
+
     await addDoc(collection(db, "customers"), {userId, name, phone, balance: 0, createdAt: new Date()});
-    document.getElementById('custName').value = ""; document.getElementById('custPhone').value = "";
+    document.getElementById('custName').value = ""; 
+    document.getElementById('custPhone').value = "+88";
     closePopup();
     loadData();
   }
@@ -317,14 +324,13 @@
     return `${date} - ${day} - ${time}`;
   }
 
-  // ===== ফাইনাল ফিক্স: ডাবল 88 এর সমস্যা + পার্সোনাল মেসেজ =====
   function formatBDNumber(num) {
     let phone = num.replace(/\D/g, ''); 
-    if(phone.startsWith('880')) return phone; // আগে থেকেই 880 থাকলে
+    if(phone.startsWith('880')) return phone;
     if(phone.startsWith('0')) { 
-      return '88' + phone.substring(1); // 017... -> 88017...
+      return '88' + phone.substring(1);
     } else if(phone.startsWith('1') && phone.length === 10){ 
-      return '88' + phone; // 171... -> 880171...
+      return '88' + phone;
     } else { 
       return '88' + phone;
     }
@@ -353,10 +359,8 @@
         statusText = `আপনার জমা আছে: ${Math.abs(c.balance)} টাকা`;
       }
 
-      // ফরমেট করা নাম্বার
       const formattedPhone = formatBDNumber(c.phone);
       
-      // পার্সোনাল মেসেজ
       let message = `আসালামু আলাইকুম ${c.name} ভাই\n`;
       message += `${shopName} থেকে বলছি\n`;
       message += `${statusText}\n`;
