@@ -156,7 +156,6 @@
     <i class="fa-solid fa-xmark" onclick="closePopup()"></i>
   </div>
   <input type="text" id="custName" placeholder="কাস্টমারের নাম">
-  <!-- এখানে +88 ডিফল্ট করা হলো -->
   <input type="tel" id="custPhone" placeholder="মোবাইল নাম্বার" value="+88">
   <button class="btn btn-add" onclick="addCustomer()">কাস্টমার এড করুন</button>
 </div>
@@ -205,7 +204,7 @@
   window.openPopup = () => {
     document.getElementById('overlay').classList.add('show');
     document.getElementById('popup').classList.add('show');
-    document.getElementById('custPhone').value = "+88"; // পপআপ ওপেন হলে +88 সেট হবে
+    document.getElementById('custPhone').value = "+88";
   }
   window.closePopup = () => {
     document.getElementById('overlay').classList.remove('show');
@@ -252,14 +251,11 @@
     window.location.href = pages[index];
   }
 
-  // আপডেট: +88 বাদ দিয়ে সেভ হবে
   window.addCustomer = async () => {
     const name = document.getElementById('custName').value.trim();
     let phone = document.getElementById('custPhone').value.trim();
     if(!name ||!phone) return alert("নাম ও নাম্বার দিন");
-    
-    phone = phone.replace('+', ''); // + বাদ দিয়ে DB তে সেভ
-
+    phone = phone.replace('+', '');
     await addDoc(collection(db, "customers"), {userId, name, phone, balance: 0, createdAt: new Date()});
     document.getElementById('custName').value = ""; 
     document.getElementById('custPhone').value = "+88";
@@ -436,7 +432,7 @@
 </script>
 
 <script>
-  if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js'); }
+  // PWA Install
   let deferredPrompt;
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault(); deferredPrompt = e;
@@ -444,6 +440,22 @@
       if(confirm("📱 স্মার্ট দোকান খাতা অ্যাপ ইনস্টল করুন?")){ deferredPrompt.prompt(); }
     }, 3000);
   });
+
+  // ===== অটো আপডেট সিস্টেম =====
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      reg.onupdatefound = () => {
+        const newWorker = reg.installing;
+        newWorker.onstatechange = () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            if(confirm("🚀 নতুন আপডেট পাওয়া গেছে!\nএখনই আপডেট করতে চান?")){
+              window.location.reload();
+            }
+          }
+        };
+      };
+    });
+  }
 </script>
 
 </body>
