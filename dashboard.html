@@ -38,22 +38,22 @@
 .summary-box{background:#f1f2f6; padding:8px; border-radius:6px;}
 .summary-box h4{margin:2px 0; color:#666; font-size:11px;}
 .summary-box p{margin:2px 0; font-size:16px; font-weight:bold; color:#667eea;}
-   .customer-card{background:white; padding:12px; border-radius:10px; margin:8px 0; box-shadow:0 1px 3px rgba(0,0,0,0.08); display:flex; justify-content:space-between; align-items:center; transition:0.2s; cursor:pointer;}
-   .customer-card:active{background:#f8f8f8;}
-   .customer-left{flex:1;}
-   .customer-name{font-size:14px; font-weight:bold; color:#333; margin-bottom:3px;}
-   .customer-phone{font-size:12px; color:#666;}
-   .icon-group{display:flex; gap:8px; margin-top:6px;}
-   .icon-btn{background:#f5f5f5; padding:8px; border-radius:50%; width:34px; height:34px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; text-decoration:none; transition:0.2s;}
-   .icon-btn:active{background:#e0e0e0; transform:scale(0.95);}
-   .icon-btn i{font-size:16px;}
-   .icon-call i{color:#4CAF50;}
-   .icon-wa i{color:#25D366;}
-   .icon-delete i{color:#ff4757;}
-   .customer-balance{font-weight:bold; font-size:15px; min-width:85px; text-align:right;}
-   .balance-due{color:#ff4757;}
-   .balance-clear{color:#1dd1a1;}
-   .balance-credit{color:#1dd1a1;}
+  .customer-card{background:white; padding:12px; border-radius:10px; margin:8px 0; box-shadow:0 1px 3px rgba(0,0,0,0.08); display:flex; justify-content:space-between; align-items:center; transition:0.2s; cursor:pointer;}
+  .customer-card:active{background:#f8f8f8;}
+  .customer-left{flex:1;}
+  .customer-name{font-size:14px; font-weight:bold; color:#333; margin-bottom:3px;}
+  .customer-phone{font-size:12px; color:#666;}
+  .icon-group{display:flex; gap:8px; margin-top:6px;}
+  .icon-btn{background:#f5f5f5; padding:8px; border-radius:50%; width:34px; height:34px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; text-decoration:none; transition:0.2s;}
+  .icon-btn:active{background:#e0e0e0; transform:scale(0.95);}
+  .icon-btn i{font-size:16px;}
+  .icon-call i{color:#4CAF50;}
+  .icon-wa i{color:#25D366;}
+  .icon-delete i{color:#ff4757;}
+  .customer-balance{font-weight:bold; font-size:15px; min-width:85px; text-align:right;}
+  .balance-due{color:#ff4757;}
+  .balance-clear{color:#1dd1a1;}
+  .balance-credit{color:#1dd1a1;}
 .search-box{position:relative; margin:5px 0 8px 0;}
 .search-box input{padding-left:28px;}
 .search-icon{position:absolute; left:8px; top:50%; transform:translateY(-50%); font-size:14px; color:#999;}
@@ -62,7 +62,7 @@
 .history-baki{color:#ff4757; font-weight:bold;}
 .history-joma{color:#1dd1a1; font-weight:bold;}
 .loading{text-align:center; color:#667eea; padding:20px; font-size:14px;}
-.btn-add-float{position:fixed; bottom:80px; right:15px; background:#ff4757; color:white; border:none; padding:12px 16px; border-radius:25px; font-size:13px; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.2); cursor:pointer; z-index:99;}
+.btn-add-float{position:fixed; bottom:80px; right:15px; background:#ff4757; color:white; border:none; padding:12px 20px; border-radius:25px; font-size:13px; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.2); cursor:pointer; z-index:99; display:flex; align-items:center; gap:5px;}
 .bottom-nav{position:fixed; bottom:0; left:0; right:0; background:white; display:flex; justify-content:space-around; padding:8px 0; box-shadow:0 -2px 10px rgba(0,0,0,0.1); z-index:100;}
 .nav-item{text-align:center; color:#888; font-size:11px; cursor:pointer;}
 .nav-item.active{color:#667eea;}
@@ -82,6 +82,13 @@
 .detail-avatar{width:50px; height:50px; border-radius:50%; background:#667eea; color:white; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:bold;}
 .detail-balance{font-size:20px; font-weight:bold;}
 .form-row{display:flex; gap:10px; margin-bottom:10px;}
+.btn-type{flex:1; padding:10px; border:2px solid #ddd; border-radius:8px; background:white; font-weight:bold; font-size:14px; cursor:pointer;}
+.btn-type.active{border-color:#ff4757; color:#ff4757; background:#ffebee;}
+.btn-phonebook{width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; background:#f8f8f8; margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:8px; font-weight:bold; cursor:pointer;}
+.btn-confirm:disabled{background:#ffcdd2!important; color:#999!important;}
+.type-badge{font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px;}
+.badge-customer{background:#e8f5e9; color:#388e3c;}
+.badge-supplier{background:#e3f2fd; color:#1976d2;}
   </style>
 </head>
 <body>
@@ -90,7 +97,6 @@
 
 <!-- MAIN PAGE -->
 <div id="mainPage" class="page">
-<div id="appContent">
   <div class="top-bar">
     <div class="shop-name" onclick="window.location.href='menu.html'"><i class="fa-solid fa-crown"></i> <span id="shopName">আমার দোকান</span> <i class="fa-solid fa-angle-down"></i></div>
     <div class="top-icons">
@@ -126,14 +132,13 @@
     </div>
 
     <div class="card">
-      <h3>সকল কাস্টমার</h3>
+      <h3>সকল কাস্টমার/সাপ্লায়ার</h3>
       <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="নাম বা নাম্বার দিয়ে সার্চ করুন..." onkeyup="searchCustomer()"></div>
       <div id="customerList">কোনো কাস্টমার নাই</div>
     </div>
   </div>
 
-  <button class="btn-add-float" onclick="openPopup()"><i class="fa-solid fa-user-plus"></i> নতুন</button>
-</div>
+  <button class="btn-add-float" onclick="openPopup()"><i class="fa-solid fa-user-plus"></i> নতুন কাস্টমার/সাপ্লায়ার</button>
 </div>
 
 <!-- CUSTOMER DETAIL PAGE -->
@@ -142,7 +147,7 @@
     <i class="fa-solid fa-arrow-left" onclick="showMainPage()" style="font-size:20px; cursor:pointer;"></i>
     <div class="detail-avatar" id="detailAvatar">ক</div>
     <div style="flex:1;">
-      <div style="font-weight:bold; font-size:16px;" id="detailName">কামাল</div>
+      <div style="font-weight:bold; font-size:16px;" id="detailName">কামাল <span id="detailTypeBadge"></span></div>
       <div style="font-size:12px; color:#666;" id="detailPhone">+8801645444350</div>
     </div>
   </div>
@@ -169,14 +174,33 @@
 </div>
 
 <div class="overlay" id="overlay" onclick="closePopup()"></div>
-<div class="popup" id="popup">
-  <div class="popup-header">
-    <h3>নতুন কাস্টমার এড</h3>
-    <i class="fa-solid fa-xmark" onclick="closePopup()"></i>
+<div class="popup" id="popup" style="border-radius:20px 20px 0 0; padding:0; max-height:90vh; overflow-y:auto;">
+  <div class="popup-header" style="padding:15px; border-bottom:1px solid #eee; position:sticky; top:0; background:white;">
+    <i class="fa-solid fa-arrow-left" onclick="closePopup()"></i>
+    <h3 style="margin:0; flex:1; text-align:center;">নতুন কাস্টমার/সাপ্লায়ার</h3>
   </div>
-  <input type="text" id="custName" placeholder="কাস্টমারের নাম">
-  <input type="tel" id="custPhone" placeholder="মোবাইল নাম্বার" value="+88">
-  <button class="btn btn-add" onclick="addCustomer()">কাস্টমার এড করুন</button>
+
+  <div style="padding:20px;">
+    <div style="display:flex; justify-content:center; margin-bottom:15px;">
+      <div style="position:relative;">
+        <img id="profilePreview" src="https://ui-avatars.com/api/?name=User&background=E0E0E0&color=666&size=80" style="width:80px; height:80px; border-radius:50%; border:2px solid #ddd;">
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; margin-bottom:15px;">
+      <button id="btnCustomer" class="btn-type active" onclick="selectTypeUser('customer')"><i class="fa-solid fa-user"></i> কাস্টমার</button>
+      <button id="btnSupplier" class="btn-type" onclick="selectTypeUser('supplier')"><i class="fa-solid fa-truck"></i> সাপ্লায়ার</button>
+    </div>
+
+    <button class="btn-phonebook" onclick="importFromContacts()">
+      <i class="fa-solid fa-address-book"></i> ফোনবুক থেকে যোগ করি
+    </button>
+
+    <input type="text" id="custName" placeholder="নাম" style="margin-bottom:10px;">
+    <input type="tel" id="custPhone" placeholder="মোবাইল নম্বর" value="+88">
+
+    <button class="btn btn-confirm" id="btnSave" onclick="addCustomer()" disabled>নিশ্চিত</button>
+  </div>
 </div>
 
 <div class="bottom-nav">
@@ -193,7 +217,7 @@
 
   const app = initializeApp({apiKey: "AIzaSyBdbroawwWdIX6CgQJFFv4Kk3oXAgnc_ak", authDomain: "smart-dokan-khata.firebaseapp.com", projectId: "smart-dokan-khata"});
   const auth = getAuth(app); const db = getFirestore(app);
-  let userId = null; let customers = []; let selectedType = null; let allTransactions = []; let selectedCustomer = null;
+  let userId = null; let customers = []; let selectedType = null; let allTransactions = []; let selectedCustomer = null; let userType = 'customer';
   const days = ["রবিবার", "সোমবার", "মঙ্গলবার", "বুধবার", "বৃহস্পতিবার", "শুক্রবার", "শনিবার"];
 
   onAuthStateChanged(auth, (user) => {
@@ -218,13 +242,12 @@
     document.getElementById('shopName').innerText = shopName;
   }
 
-  // পেইজ সুইচ
   window.showCustomerDetail = (custId) => {
     selectedCustomer = customers.find(c => c.id === custId);
     document.getElementById('mainPage').classList.remove('active');
     document.getElementById('detailPage').classList.add('active');
 
-    document.getElementById('detailName').innerText = selectedCustomer.name;
+    document.getElementById('detailName').innerHTML = selectedCustomer.name + ` <span class="type-badge ${selectedCustomer.type==='supplier'?'badge-supplier':'badge-customer'}">${selectedCustomer.type==='supplier'?'সাপ্লায়ার':'কাস্টমার'}</span>`;
     document.getElementById('detailPhone').innerText = selectedCustomer.phone;
     document.getElementById('detailAvatar').innerText = selectedCustomer.name.charAt(0);
 
@@ -241,7 +264,6 @@
     loadData();
   }
 
-  // নতুন লেনদেন এড
   window.addTransaction = async () => {
     const dilam = Number(document.getElementById('inputDilam').value) || 0;
     const pelam = Number(document.getElementById('inputPelam').value) || 0;
@@ -258,7 +280,12 @@
     });
 
     let newBalance = selectedCustomer.balance;
-    if(type === 'baki') newBalance += amount; else newBalance -= amount;
+    // সাপ্লায়ার হলে হিসাব উল্টা
+    if(selectedCustomer.type === 'supplier'){
+      if(type === 'baki') newBalance -= amount; else newBalance += amount;
+    } else {
+      if(type === 'baki') newBalance += amount; else newBalance -= amount;
+    }
     await updateDoc(doc(db, "customers", selectedCustomer.id), {balance: newBalance});
 
     alert("লেনদেন সেভ হয়েছে");
@@ -268,7 +295,6 @@
     showCustomerDetail(selectedCustomer.id);
   }
 
-  // কাস্টমারের হিস্টরি লোড
   function loadCustomerHistory(custId) {
     const trans = allTransactions.filter(t => t.custId === custId).sort((a,b) => new Date(b.date) - new Date(a.date));
     let html = "";
@@ -284,6 +310,37 @@
     document.getElementById('customerHistory').innerHTML = html || "<div style='text-align:center; padding:20px;'>কোনো লেনদেন নাই</div>";
   }
 
+  window.selectTypeUser = (type) => {
+    userType = type;
+    document.getElementById('btnCustomer').classList.remove('active');
+    document.getElementById('btnSupplier').classList.remove('active');
+    document.getElementById(type==='customer'?'btnCustomer':'btnSupplier').classList.add('active');
+    checkForm();
+  }
+
+  window.importFromContacts = async () => {
+    if('contacts' in navigator && 'ContactsManager' in window){
+      try {
+        const contacts = await navigator.contacts.select(['name', 'tel'], {multiple: false});
+        if(contacts.length > 0){
+          document.getElementById('custName').value = contacts[0].name[0] || '';
+          document.getElementById('custPhone').value = contacts[0].tel[0] || '+88';
+          checkForm();
+        }
+      } catch (ex) { alert("ফোনবুক এক্সেস পাওয়া যায়নি"); }
+    } else { alert("আপনার ফোন এই ফিচার সাপোর্ট করে না"); }
+  }
+
+  document.getElementById('custName').addEventListener('input', checkForm);
+  document.getElementById('custPhone').addEventListener('input', checkForm);
+  function checkForm(){
+    const name = document.getElementById('custName').value.trim();
+    const phone = document.getElementById('custPhone').value.trim();
+    const btn = document.getElementById('btnSave');
+    if(name && phone.length > 5){ btn.disabled = false; btn.style.background = '#ff4757'; btn.style.color = 'white'; }
+    else { btn.disabled = true; btn.style.background = '#ffcdd2'; btn.style.color = '#999'; }
+  }
+
   window.openSupport = () => {
     const msg = "আসালামু আলাইকুম ভাই\nআমি Smart Dokan Khata অ্যাপ থেকে মেসেজ দিলাম। আমার একটু হেল্প লাগবে।";
     const supportNumber = "8801645444350";
@@ -294,50 +351,11 @@
     document.getElementById('overlay').classList.add('show');
     document.getElementById('popup').classList.add('show');
     document.getElementById('custPhone').value = "+88";
+    checkForm();
   }
   window.closePopup = () => {
     document.getElementById('overlay').classList.remove('show');
     document.getElementById('popup').classList.remove('show');
-  }
-
-  window.multiBusiness = () => alert("মাল্টি ব্যবসা - Pro ফিচার। 1টার বেশি দোকান লাগবে");
-  window.stock = () => window.location.href = "stock.html";
-  window.notes = () => {
-    const note = prompt("ব্যবসার নোট লিখুন:");
-    if(note) { localStorage.setItem("businessNote", note); alert("নোট সেভ হয়েছে"); }
-  }
-  window.reminder = () => alert("গ্রুপ তাগাদা - খুব শীগ্রই আসছে");
-  window.qrCode = () => {
-    if(!userId) return;
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${userId}`;
-    window.open(qrUrl, '_blank');
-  }
-  window.backup = () => {
-    const shopName = document.getElementById('shopName').innerText;
-    const data = {shopName, customers, transactions: allTransactions, date: new Date()};
-    const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = "smart-khata-backup.json"; a.click();
-    alert("ব্যাকআপ ডাউনলোড হয়েছে");
-  }
-
-  window.taliMessage = () => {
-    const dueCustomers = customers.filter(c => c.balance > 0);
-    const shopName = document.getElementById('shopName').innerText;
-    if(dueCustomers.length === 0) return alert("কারো বাকি নাই");
-    let msg = `আসালামু আলাইকুম\n${shopName} থেকে বলছি\nআপনার বাকির হিসাব:\n\n`;
-    dueCustomers.forEach(c => msg += `${c.name}: ${c.balance} টাকা\n`);
-    msg += "\nদয়া করে পরিশোধ করে দিয়েন। ধন্যবাদ 🙏";
-    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
-  }
-  window.cashbox = () => window.location.href = "cashbox.html";
-
-  window.switchTab = (el, index) => {
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    el.classList.add('active');
-    const pages = ["dashboard.html", "cashbox.html", "wallet.html", "menu.html"];
-    window.location.href = pages[index];
   }
 
   window.addCustomer = async () => {
@@ -345,7 +363,7 @@
     let phone = document.getElementById('custPhone').value.trim();
     if(!name ||!phone) return alert("নাম ও নাম্বার দিন");
     phone = phone.replace('+', '');
-    await addDoc(collection(db, "customers"), {userId, name, phone, balance: 0, createdAt: new Date()});
+    await addDoc(collection(db, "customers"), {userId, name, phone, type: userType, balance: 0, createdAt: new Date()});
     document.getElementById('custName').value = "";
     document.getElementById('custPhone').value = "+88";
     closePopup();
@@ -398,11 +416,12 @@
       const formattedPhone = formatBDNumber(c.phone);
       let message = `আসালামু আলাইকুম ${c.name} ভাই\n${shopName} থেকে বলছি\nদয়া করে পরিশোধ করে দিয়েন। ধন্যবাদ 🙏`;
       const waLink = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
+      let typeBadge = c.type === 'supplier'? '<span class="type-badge badge-supplier">সাপ্লায়ার</span>' : '<span class="type-badge badge-customer">কাস্টমার</span>';
 
       list.innerHTML += `
         <div class="customer-card" onclick="showCustomerDetail('${c.id}')">
           <div class="customer-left">
-            <div class="customer-name">${c.name}</div>
+            <div class="customer-name">${c.name} ${typeBadge}</div>
             <div class="customer-phone">${c.phone}</div>
             <div class="icon-group">
               <a href="tel:${c.phone}" onclick="event.stopPropagation()" class="icon-btn icon-call"><i class="fa-solid fa-phone"></i></a>
@@ -421,7 +440,12 @@
     customers = []; let totalPabo=0, totalDebo=0;
     custSnap.forEach(docSnap => {
       const c = {id: docSnap.id,...docSnap.data()}; customers.push(c);
-      if(c.balance > 0) totalPabo += c.balance; else totalDebo += Math.abs(c.balance);
+      // সাপ্লায়ার হলে উল্টা
+      if(c.type === 'supplier'){
+        if(c.balance < 0) totalPabo += Math.abs(c.balance); else totalDebo += c.balance;
+      } else {
+        if(c.balance > 0) totalPabo += c.balance; else totalDebo += Math.abs(c.balance);
+      }
     });
     displayCustomers(customers);
     document.getElementById('totalPabo').innerText = totalPabo + " টাকা";
@@ -431,10 +455,20 @@
     allTransactions = [];
     transSnap.forEach(docSnap => allTransactions.push({id: docSnap.id,...docSnap.data()}));
   }
+
+  window.multiBusiness = () => alert("মাল্টি ব্যবসা - Pro ফিচার");
+  window.stock = () => window.location.href = "stock.html";
+  window.notes = () => { const note = prompt("ব্যবসার নোট লিখুন:"); if(note) { localStorage.setItem("businessNote", note); alert("নোট সেভ হয়েছে"); } }
+  window.reminder = () => alert("গ্রুপ তাগাদা - খুব শীগ্রই আসছে");
+  window.qrCode = () => { if(!userId) return; const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${userId}`; window.open(qrUrl, '_blank'); }
+  window.backup = () => { const shopName = document.getElementById('shopName').innerText; const data = {shopName, customers, transactions: allTransactions, date: new Date()}; const blob = new Blob([JSON.stringify(data)], {type: 'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = "smart-khata-backup.json"; a.click(); alert("ব্যাকআপ ডাউনলোড হয়েছে"); }
+  window.taliMessage = () => { const dueCustomers = customers.filter(c => c.balance > 0 && c.type!== 'supplier'); const shopName = document.getElementById('shopName').innerText; if(dueCustomers.length === 0) return alert("কারো বাকি নাই"); let msg = `আসালামু আলাইকুম\n${shopName} থেকে বলছি\nআপনার বাকির হিসাব:\n\n`; dueCustomers.forEach(c => msg += `${c.name}: ${c.balance} টাকা\n`); msg += "\nদয়া করে পরিশোধ করে দিয়েন। ধন্যবাদ 🙏"; window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`); }
+  window.cashbox = () => window.location.href = "cashbox.html";
+  window.switchTab = (el, index) => { document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); el.classList.add('active'); const pages = ["dashboard.html", "cashbox.html", "wallet.html", "menu.html"]; window.location.href = pages[index]; }
 </script>
 
 <script>
-  // PWA Install
+  if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js'); }
   let deferredPrompt;
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault(); deferredPrompt = e;
@@ -442,22 +476,6 @@
       if(confirm("📱 স্মার্ট দোকান খাতা অ্যাপ ইনস্টল করুন?")){ deferredPrompt.prompt(); }
     }, 3000);
   });
-
-  // ===== অটো আপডেট সিস্টেম =====
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').then(reg => {
-      reg.onupdatefound = () => {
-        const newWorker = reg.installing;
-        newWorker.onstatechange = () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            if(confirm("🚀 নতুন আপডেট পাওয়া গেছে!\nএখনই আপডেট করতে চান?")){
-              window.location.reload();
-            }
-          }
-        };
-      };
-    });
-  }
 </script>
 
 </body>
