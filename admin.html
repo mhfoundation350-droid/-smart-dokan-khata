@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <title>Admin Panel - Smart Dokan Khata</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    *{box-sizing:border-box; font-family: 'SolaimanLipi', Arial, sans-serif;}
+    body{background:#f5f5f5; margin:0; padding:20px;}
+    .header{background:#667eea; color:white; padding:20px; border-radius:10px; margin-bottom:20px; text-align:center;}
+    .stats{display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-bottom:20px;}
+    .stat-card{background:white; padding:20px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1); text-align:center;}
+    .stat-card h3{margin:0; color:#666; font-size:14px;}
+    .stat-card p{margin:10px 0 0 0; font-size:28px; font-weight:bold; color:#667eea;}
+    .user-table{background:white; padding:20px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+    table{width:100%; border-collapse:collapse;}
+    th, td{padding:12px; text-align:left; border-bottom:1px solid #eee; font-size:13px;}
+    th{background:#f8f8f8;}
+    .badge{background:#1dd1a1; color:white; padding:3px 8px; border-radius:12px; font-size:11px;}
+    .badge-trial{background:#ff9800;}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1><i class="fa-solid fa-chart-line"></i> Smart Dokan Khata - Admin Panel</h1>
+</div>
+
+<div class="stats">
+  <div class="stat-card">
+    <h3>মোট ইউজার</h3>
+    <p id="totalUsers">0</p>
+  </div>
+  <div class="stat-card">
+    <h3>এক্টিভ ইউজার 7 দিন</h3>
+    <p id="activeUsers">0</p>
+  </div>
+  <div class="stat-card">
+    <h3>মোট কাস্টমার</h3>
+    <p id="totalCustomers">0</p>
+  </div>
+  <div class="stat-card">
+    <h3>মোট লেনদেন</h3>
+    <p id="totalTransactions">0</p>
+  </div>
+</div>
+
+<div class="user-table">
+  <h3>সকল ইউজার</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>ইমেইল</th>
+        <th>দোকানের নাম</th>
+        <th>কাস্টমার</th>
+        <th>লেনদেন</th>
+        <th>স্ট্যাটাস</th>
+        <th>জয়েন ডেট</th>
+      </tr>
+    </thead>
+    <tbody id="userTableBody">
+      <tr><td colspan="7">লোড হচ্ছে...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, collection, getDocs, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const app = initializeApp({apiKey: "AIzaSyBdbroawwWdIX6CgQJFFv4Kk3oXAgnc_ak", authDomain: "smart-dokan-khata.firebaseapp.com", projectId: "smart-dokan-khata"});
+  const auth = getAuth(app); const db = getFirestore(app);
+
+  // শুধু আপনার ইমেইল এডমিন হতে পারবে
+  const ADMIN_EMAIL = "youradmin@gmail.com"; // এটা আপনার ইমেইল দিয়ে চেঞ্জ করেন
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user && user.email === ADMIN_EMAIL) {
+      loadAdminData();
+    } else {
+      alert("আপনি এডমিন না");
+      window.location.href = "index.html";
+    }
+  });
+
+  async function loadAdminData() {
+    // 1. সব ইউজার
+    const usersSnap = await getDocs(collection(db, "users"));
+    const allUsers = [];
+    usersSnap.forEach(doc => allUsers.push({id: doc.id, ...doc.data()}));
+    document.getElementById('totalUsers').innerText = allUsers.length;
+
+    // 2. সব কাস্টমার
+    const custSnap = await getDocs(collection(db, "customers"));
+    document.getElementById('totalCustomers').innerText = custSnap.size;
+
+    // 3. সব লেনদেন
+    const transSnap = await getDocs(collection(db, "transactions"));
+    document.getElementById('totalTransactions').innerText = transSnap.size;
+
+    // 4. টেবিল লোড
+    let tableHTML = "";
+    allUsers.forEach((u, index) => {
+      const userCustomers = custSnap.docs.filter(d => d.data().userId === u.id).length;
+      const userTransactions = transSnap.docs.filter(d => d.data().userId === u.id).length;
+      const status = u.trialEnd && new Date(u.trialEnd) > new Date() ? '<span class="badge">ট্রায়াল</span>' : '<span class="badge badge-trial">ফ্রি</span>';
+      
+      tableHTML += `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${u.email || 'N/A'}</td>
+          <td>${u.shopName || 'আমার দোকান'}</td>
+          <td>${userCustomers}</td>
+          <td>${userTransactions}</td>
+          <td>${status}</td>
+          <td>${u.createdAt ? new Date(u.createdAt).toLocaleDateString('bn-BD') : 'N/A'}</td>
+        </tr>
+      `;
+    });
+    document.getElementById('userTableBody').innerHTML = tableHTML;
+  }
+</script>
+</body>
+</html>
