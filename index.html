@@ -38,6 +38,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"; // নতুন লাইন
 
   const firebaseConfig = {
     apiKey: "AIzaSyBdbroawwWdIX6CgQJFFv4Kk3oXAgnc_ak",
@@ -47,6 +48,7 @@
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const db = getFirestore(app); // নতুন লাইন
 
   function goToDashboard() {
     window.location.href = "dashboard.html";
@@ -60,7 +62,20 @@
     
     msg.innerText = "একাউন্ট তৈরি হচ্ছে...";
     createUserWithEmailAndPassword(auth, email, password)
-      .then(() => goToDashboard())
+      .then(async (userCredential) => { // async যোগ করলাম
+        const user = userCredential.user;
+        
+        // নতুন: users collection এ ডাটা সেভ
+        await setDoc(doc(db, "users", user.uid), {
+          email: user.email,
+          shopName: "আমার দোকান",
+          createdAt: new Date(),
+          trialEnd: new Date(Date.now() + 30*24*60*60*1000), // 30 দিন ট্রায়াল
+          lastLogin: new Date()
+        });
+
+        goToDashboard();
+      })
       .catch((error) => msg.innerText = "Error: " + error.message);
   }
 
@@ -72,7 +87,13 @@
 
     msg.innerText = "লগইন হচ্ছে...";
     signInWithEmailAndPassword(auth, email, password)
-      .then(() => goToDashboard())
+      .then((userCredential) => {
+        // লগিন করলে lastLogin আপডেট
+        setDoc(doc(db, "users", userCredential.user.uid), {
+          lastLogin: new Date()
+        }, { merge: true });
+        goToDashboard();
+      })
       .catch((error) => msg.innerText = "Error: " + error.message);
   }
 </script>
