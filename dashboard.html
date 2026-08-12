@@ -11,76 +11,86 @@
   <style>
     *{box-sizing:border-box;}
     body{font-family: 'SolaimanLipi', Arial, sans-serif; background:#f5f5f5; margin:0; padding:0; min-height:100vh; padding-bottom:70px;}
- .top-bar{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; padding:12px 15px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100;}
- .shop-name{font-size:15px; font-weight:bold; display:flex; align-items:center; gap:5px; cursor:pointer;}
- .shop-name i{color:gold;}
- .top-icons i{font-size:20px; margin-left:15px; position:relative; cursor:pointer;}
- .badge{background:red; color:white; font-size:10px; padding:2px 5px; border-radius:50%; position:absolute; top:-5px; right:-8px;}
- .grid-menu{display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; padding:12px; background:white; margin-bottom:8px;}
- .menu-item{text-align:center; cursor:pointer; padding:8px 0; border-radius:8px; transition:0.2s;}
- .menu-item:active{background:#f0f0f0;}
- .menu-item i{font-size:26px; color:#667eea; margin-bottom:4px; display:block;}
- .menu-item span{font-size:11px; color:#333;}
- .trial-box{background:#fff3cd; padding:10px; margin:10px; border-radius:8px; display:flex; align-items:center; gap:10px;}
- .container{max-width:600px; margin:auto; padding:0 8px;}
- .card{background:white; padding:10px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1); margin-bottom:8px;}
- .card h3{margin:0 0 8px 0; color:#333; border-bottom:1px solid #eee; padding-bottom:5px; font-size:14px;}
+.top-bar{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; padding:12px 15px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100;}
+.shop-name{font-size:15px; font-weight:bold; display:flex; align-items:center; gap:5px; cursor:pointer;}
+.shop-name i{color:gold;}
+.top-icons i{font-size:20px; margin-left:15px; position:relative; cursor:pointer;}
+.badge{background:red; color:white; font-size:10px; padding:2px 5px; border-radius:50%; position:absolute; top:-5px; right:-8px;}
+.grid-menu{display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; padding:12px; background:white; margin-bottom:8px;}
+.menu-item{text-align:center; cursor:pointer; padding:8px 0; border-radius:8px; transition:0.2s;}
+.menu-item:active{background:#f0f0f0;}
+.menu-item i{font-size:26px; color:#667eea; margin-bottom:4px; display:block;}
+.menu-item span{font-size:11px; color:#333;}
+.trial-box{background:#fff3cd; padding:10px; margin:10px; border-radius:8px; display:flex; align-items:center; gap:10px;}
+.container{max-width:600px; margin:auto; padding:0 8px;}
+.card{background:white; padding:10px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1); margin-bottom:8px;}
+.card h3{margin:0 0 8px 0; color:#333; border-bottom:1px solid #eee; padding-bottom:5px; font-size:14px;}
     input, select{width:100%; padding:8px; margin:5px 0; border:1px solid #ccc; border-radius:5px; font-size:13px; font-family: inherit;}
- .btn-group{display:flex; gap:6px;}
- .btn{flex:1; padding:8px; border:none; border-radius:5px; cursor:pointer; font-size:13px; font-weight:bold; font-family: inherit;}
- .btn-baki{background:#ff6b6b; color:white;}
- .btn-joma{background:#1dd1a1; color:white;}
- .btn-add{background:#667eea; color:white;}
- .btn-confirm{background:#3742fa; color:white; width:100%; margin-top:6px; font-size:13px;}
- .btn-select{border:2px solid transparent;}
- .btn-select.active{border-color:#333;}
- .summary{display:grid; grid-template-columns:1fr 1fr; gap:6px; text-align:center;}
- .summary-box{background:#f1f2f6; padding:8px; border-radius:6px;}
- .summary-box h4{margin:2px 0; color:#666; font-size:11px;}
- .summary-box p{margin:2px 0; font-size:16px; font-weight:bold; color:#667eea;}
-    .customer-card{background:white; padding:12px; border-radius:10px; margin:8px 0; box-shadow:0 1px 3px rgba(0,0,0,0.08); display:flex; justify-content:space-between; align-items:center; transition:0.2s;}
-    .customer-card:active{background:#f8f8f8;}
-    .customer-left{flex:1;}
-    .customer-name{font-size:14px; font-weight:bold; color:#333; margin-bottom:3px;}
-    .customer-phone{font-size:12px; color:#666;}
-    .icon-group{display:flex; gap:8px; margin-top:6px;}
-    .icon-btn{background:#f5f5f5; padding:8px; border-radius:50%; width:34px; height:34px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; text-decoration:none; transition:0.2s;}
-    .icon-btn:active{background:#e0e0e0; transform:scale(0.95);}
-    .icon-btn i{font-size:16px;}
-    .icon-call i{color:#4CAF50;}
-    .icon-wa i{color:#25D366;}
-    .icon-delete i{color:#ff4757;}
-    .customer-balance{font-weight:bold; font-size:15px; min-width:85px; text-align:right;}
-    .balance-due{color:#ff4757;}
-    .balance-clear{color:#1dd1a1;}
-    .balance-credit{color:#1dd1a1;}
- .search-box{position:relative; margin:5px 0 8px 0;}
- .search-box input{padding-left:28px;}
- .search-icon{position:absolute; left:8px; top:50%; transform:translateY(-50%); font-size:14px; color:#999;}
- .history-item{display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #eee; font-size:12px;}
- .history-date{font-size:10px; color:#666;}
- .history-baki{color:#ff4757; font-weight:bold;}
- .history-joma{color:#1dd1a1; font-weight:bold;}
- .loading{text-align:center; color:#667eea; padding:20px; font-size:14px;}
- .btn-add-float{position:fixed; bottom:80px; right:15px; background:#ff4757; color:white; border:none; padding:12px 16px; border-radius:25px; font-size:13px; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.2); cursor:pointer; z-index:99;}
- .bottom-nav{position:fixed; bottom:0; left:0; right:0; background:white; display:flex; justify-content:space-around; padding:8px 0; box-shadow:0 -2px 10px rgba(0,0,0,0.1); z-index:100;}
- .nav-item{text-align:center; color:#888; font-size:11px; cursor:pointer;}
- .nav-item.active{color:#667eea;}
- .nav-item i{font-size:20px; display:block; margin-bottom:3px;}
- .overlay{position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); display:none; z-index:200;}
- .overlay.show{display:block;}
- .popup{position:fixed; bottom:-100%; left:0; right:0; background:white; border-radius:20px 20px 0 0; padding:20px; transition:0.3s; z-index:201; max-width:600px; margin:auto;}
- .popup.show{bottom:0;}
- .popup-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;}
- .popup-header h3{margin:0; font-size:16px;}
- .popup-header i{font-size:20px; cursor:pointer;}
+.btn-group{display:flex; gap:6px;}
+.btn{flex:1; padding:8px; border:none; border-radius:5px; cursor:pointer; font-size:13px; font-weight:bold; font-family: inherit;}
+.btn-baki{background:#ff6b6b; color:white;}
+.btn-joma{background:#1dd1a1; color:white;}
+.btn-add{background:#667eea; color:white;}
+.btn-confirm{background:#3742fa; color:white; width:100%; margin-top:6px; font-size:13px;}
+.btn-select{border:2px solid transparent;}
+.btn-select.active{border-color:#333;}
+.summary{display:grid; grid-template-columns:1fr 1fr; gap:6px; text-align:center;}
+.summary-box{background:#f1f2f6; padding:8px; border-radius:6px;}
+.summary-box h4{margin:2px 0; color:#666; font-size:11px;}
+.summary-box p{margin:2px 0; font-size:16px; font-weight:bold; color:#667eea;}
+   .customer-card{background:white; padding:12px; border-radius:10px; margin:8px 0; box-shadow:0 1px 3px rgba(0,0,0,0.08); display:flex; justify-content:space-between; align-items:center; transition:0.2s; cursor:pointer;}
+   .customer-card:active{background:#f8f8f8;}
+   .customer-left{flex:1;}
+   .customer-name{font-size:14px; font-weight:bold; color:#333; margin-bottom:3px;}
+   .customer-phone{font-size:12px; color:#666;}
+   .icon-group{display:flex; gap:8px; margin-top:6px;}
+   .icon-btn{background:#f5f5f5; padding:8px; border-radius:50%; width:34px; height:34px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; text-decoration:none; transition:0.2s;}
+   .icon-btn:active{background:#e0e0e0; transform:scale(0.95);}
+   .icon-btn i{font-size:16px;}
+   .icon-call i{color:#4CAF50;}
+   .icon-wa i{color:#25D366;}
+   .icon-delete i{color:#ff4757;}
+   .customer-balance{font-weight:bold; font-size:15px; min-width:85px; text-align:right;}
+   .balance-due{color:#ff4757;}
+   .balance-clear{color:#1dd1a1;}
+   .balance-credit{color:#1dd1a1;}
+.search-box{position:relative; margin:5px 0 8px 0;}
+.search-box input{padding-left:28px;}
+.search-icon{position:absolute; left:8px; top:50%; transform:translateY(-50%); font-size:14px; color:#999;}
+.history-item{display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #eee; font-size:12px;}
+.history-date{font-size:10px; color:#666;}
+.history-baki{color:#ff4757; font-weight:bold;}
+.history-joma{color:#1dd1a1; font-weight:bold;}
+.loading{text-align:center; color:#667eea; padding:20px; font-size:14px;}
+.btn-add-float{position:fixed; bottom:80px; right:15px; background:#ff4757; color:white; border:none; padding:12px 16px; border-radius:25px; font-size:13px; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.2); cursor:pointer; z-index:99;}
+.bottom-nav{position:fixed; bottom:0; left:0; right:0; background:white; display:flex; justify-content:space-around; padding:8px 0; box-shadow:0 -2px 10px rgba(0,0,0,0.1); z-index:100;}
+.nav-item{text-align:center; color:#888; font-size:11px; cursor:pointer;}
+.nav-item.active{color:#667eea;}
+.nav-item i{font-size:20px; display:block; margin-bottom:3px;}
+.overlay{position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); display:none; z-index:200;}
+.overlay.show{display:block;}
+.popup{position:fixed; bottom:-100%; left:0; right:0; background:white; border-radius:20px 20px 0 0; padding:20px; transition:0.3s; z-index:201; max-width:600px; margin:auto;}
+.popup.show{bottom:0;}
+.popup-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;}
+.popup-header h3{margin:0; font-size:16px;}
+.popup-header i{font-size:20px; cursor:pointer;}
+
+ /* নতুন: কাস্টমার ডিটেইলস */
+.page{display:none;}
+.page.active{display:block;}
+.detail-header{background:white; padding:15px; display:flex; align-items:center; gap:10px; border-bottom:1px solid #eee; position:sticky; top:0;}
+.detail-avatar{width:50px; height:50px; border-radius:50%; background:#667eea; color:white; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:bold;}
+.detail-balance{font-size:20px; font-weight:bold;}
+.form-row{display:flex; gap:10px; margin-bottom:10px;}
   </style>
 </head>
 <body>
 
 <div id="loading" class="loading">লোড হচ্ছে...</div>
 
-<div id="appContent" style="display:none;">
+<!-- MAIN PAGE -->
+<div id="mainPage" class="page">
+<div id="appContent">
   <div class="top-bar">
     <div class="shop-name" onclick="window.location.href='menu.html'"><i class="fa-solid fa-crown"></i> <span id="shopName">আমার দোকান</span> <i class="fa-solid fa-angle-down"></i></div>
     <div class="top-icons">
@@ -108,21 +118,10 @@
     </div>
 
     <div class="card">
-      <h3>নতুন লেনদেন</h3>
-      <select id="custSelect"><option>কাস্টমার সিলেক্ট করুন</option></select>
-      <input type="number" id="amount" placeholder="টাকার পরিমাণ">
-      <div class="btn-group">
-        <button id="btnBaki" class="btn btn-baki btn-select" onclick="selectType('baki')">বাকি +</button>
-        <button id="btnJoma" class="btn btn-joma btn-select" onclick="selectType('joma')">জমা -</button>
-      </div>
-      <button class="btn btn-confirm" onclick="confirmTransaction()">✅ কনফার্ম করুন</button>
-    </div>
-
-    <div class="card">
       <h3>মোট হিসাব</h3>
       <div class="summary">
-        <div class="summary-box"><h4>মোট বাকি</h4><p id="totalBaki">0 টাকা</p></div>
-        <div class="summary-box"><h4>মোট জমা</h4><p id="totalJoma">0 টাকা</p></div>
+        <div class="summary-box"><h4>মোট পাবো</h4><p id="totalPabo" style="color:#ff4757">0 টাকা</p></div>
+        <div class="summary-box"><h4>মোট দেবো</h4><p id="totalDebo" style="color:#1dd1a1">0 টাকা</p></div>
       </div>
     </div>
 
@@ -131,21 +130,41 @@
       <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="নাম বা নাম্বার দিয়ে সার্চ করুন..." onkeyup="searchCustomer()"></div>
       <div id="customerList">কোনো কাস্টমার নাই</div>
     </div>
-
-    <div class="card">
-      <h3>সাম্প্রতিক লেনদেন</h3>
-      <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="historySearch" placeholder="নাম বা নাম্বার লিখে সার্চ করুন..." onkeyup="searchHistory()"></div>
-      <div id="transactionHistory">কোনো লেনদেন নাই</div>
-    </div>
   </div>
 
   <button class="btn-add-float" onclick="openPopup()"><i class="fa-solid fa-user-plus"></i> নতুন</button>
+</div>
+</div>
 
-  <div class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab(this, 0)"><i class="fa-solid fa-book"></i>টালি</div>
-    <div class="nav-item" onclick="switchTab(this, 1)"><i class="fa-solid fa-wallet"></i>ক্যাশবক্স</div>
-    <div class="nav-item" onclick="switchTab(this, 2)"><i class="fa-solid fa-credit-card"></i>ওয়ালেট</div>
-    <div class="nav-item" onclick="switchTab(this, 3)"><i class="fa-solid fa-bars"></i>মেনু</div>
+<!-- CUSTOMER DETAIL PAGE -->
+<div id="detailPage" class="page">
+  <div class="detail-header">
+    <i class="fa-solid fa-arrow-left" onclick="showMainPage()" style="font-size:20px; cursor:pointer;"></i>
+    <div class="detail-avatar" id="detailAvatar">ক</div>
+    <div style="flex:1;">
+      <div style="font-weight:bold; font-size:16px;" id="detailName">কামাল</div>
+      <div style="font-size:12px; color:#666;" id="detailPhone">+8801645444350</div>
+    </div>
+  </div>
+
+  <div style="padding:15px; background:white; text-align:center; margin-bottom:8px;">
+    <div class="detail-balance" id="detailBalance">পাবো ৳ 860.00</div>
+  </div>
+
+  <div class="card">
+    <h3>নতুন লেনদেন</h3>
+    <div class="form-row">
+      <input type="number" id="inputDilam" placeholder="৳ দিলাম/বেচা">
+      <input type="number" id="inputPelam" placeholder="৳ পেলাম">
+    </div>
+    <input type="text" id="inputDetails" placeholder="বিবরণ - যেমন: কাঁচা বাজার">
+    <input type="date" id="inputDate">
+    <button class="btn btn-confirm" onclick="addTransaction()">✅ নিশ্চিত</button>
+  </div>
+
+  <div class="card">
+    <h3>লেনদেন হিস্টরি</h3>
+    <div id="customerHistory"></div>
   </div>
 </div>
 
@@ -160,6 +179,13 @@
   <button class="btn btn-add" onclick="addCustomer()">কাস্টমার এড করুন</button>
 </div>
 
+<div class="bottom-nav">
+  <div class="nav-item active" onclick="showMainPage()"><i class="fa-solid fa-book"></i>টালি</div>
+  <div class="nav-item" onclick="switchTab(this, 1)"><i class="fa-solid fa-wallet"></i>ক্যাশবক্স</div>
+  <div class="nav-item" onclick="switchTab(this, 2)"><i class="fa-solid fa-credit-card"></i>ওয়ালেট</div>
+  <div class="nav-item" onclick="switchTab(this, 3)"><i class="fa-solid fa-bars"></i>মেনু</div>
+</div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -167,14 +193,14 @@
 
   const app = initializeApp({apiKey: "AIzaSyBdbroawwWdIX6CgQJFFv4Kk3oXAgnc_ak", authDomain: "smart-dokan-khata.firebaseapp.com", projectId: "smart-dokan-khata"});
   const auth = getAuth(app); const db = getFirestore(app);
-  let userId = null; let customers = []; let selectedType = null; let allTransactions = [];
+  let userId = null; let customers = []; let selectedType = null; let allTransactions = []; let selectedCustomer = null;
   const days = ["রবিবার", "সোমবার", "মঙ্গলবার", "বুধবার", "বৃহস্পতিবার", "শুক্রবার", "শনিবার"];
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
       userId = user.uid;
       document.getElementById('loading').style.display = 'none';
-      document.getElementById('appContent').style.display = 'block';
+      document.getElementById('mainPage').classList.add('active');
       loadData();
       loadShopName();
     } else {
@@ -187,12 +213,75 @@
     const docRef = doc(db, "users", userId);
     const docSnap = await getDoc(docRef);
     let shopName = "আমার দোকান";
-    if(docSnap.exists() && docSnap.data().shopName){
-      shopName = docSnap.data().shopName;
-    } else {
-      shopName = localStorage.getItem("shopName") || "আমার দোকান";
-    }
+    if(docSnap.exists() && docSnap.data().shopName){ shopName = docSnap.data().shopName; }
+    else { shopName = localStorage.getItem("shopName") || "আমার দোকান"; }
     document.getElementById('shopName').innerText = shopName;
+  }
+
+  // পেইজ সুইচ
+  window.showCustomerDetail = (custId) => {
+    selectedCustomer = customers.find(c => c.id === custId);
+    document.getElementById('mainPage').classList.remove('active');
+    document.getElementById('detailPage').classList.add('active');
+
+    document.getElementById('detailName').innerText = selectedCustomer.name;
+    document.getElementById('detailPhone').innerText = selectedCustomer.phone;
+    document.getElementById('detailAvatar').innerText = selectedCustomer.name.charAt(0);
+
+    let balanceText = selectedCustomer.balance > 0? `পাবো ৳ ${selectedCustomer.balance}` : selectedCustomer.balance < 0? `দেবো ৳ ${Math.abs(selectedCustomer.balance)}` : `হিসাব ক্লিয়ার`;
+    document.getElementById('detailBalance').style.color = selectedCustomer.balance > 0? '#ff4757' : '#1dd1a1';
+    document.getElementById('detailBalance').innerText = balanceText;
+    document.getElementById('inputDate').valueAsDate = new Date();
+
+    loadCustomerHistory(custId);
+  }
+  window.showMainPage = () => {
+    document.getElementById('detailPage').classList.remove('active');
+    document.getElementById('mainPage').classList.add('active');
+    loadData();
+  }
+
+  // নতুন লেনদেন এড
+  window.addTransaction = async () => {
+    const dilam = Number(document.getElementById('inputDilam').value) || 0;
+    const pelam = Number(document.getElementById('inputPelam').value) || 0;
+    const details = document.getElementById('inputDetails').value;
+    const date = document.getElementById('inputDate').value;
+
+    if(dilam === 0 && pelam === 0) return alert("টাকার পরিমাণ দিন");
+
+    const amount = dilam > 0? dilam : pelam;
+    const type = dilam > 0? 'baki' : 'joma';
+
+    await addDoc(collection(db, "transactions"), {
+      userId, custId: selectedCustomer.id, amount, type, details, date: new Date(date)
+    });
+
+    let newBalance = selectedCustomer.balance;
+    if(type === 'baki') newBalance += amount; else newBalance -= amount;
+    await updateDoc(doc(db, "customers", selectedCustomer.id), {balance: newBalance});
+
+    alert("লেনদেন সেভ হয়েছে");
+    document.getElementById('inputDilam').value = "";
+    document.getElementById('inputPelam').value = "";
+    document.getElementById('inputDetails').value = "";
+    showCustomerDetail(selectedCustomer.id);
+  }
+
+  // কাস্টমারের হিস্টরি লোড
+  function loadCustomerHistory(custId) {
+    const trans = allTransactions.filter(t => t.custId === custId).sort((a,b) => new Date(b.date) - new Date(a.date));
+    let html = "";
+    trans.forEach(t => {
+      html += `<div class="history-item">
+        <div>
+          <b>${t.details || (t.type==='baki'?'বাকি':'জমা')}</b><br>
+          <span class="history-date">${formatDate(t.date)}</span>
+        </div>
+        <div class="${t.type==='baki'?'history-baki':'history-joma'}">${t.type==='baki'?'+':'-'}${t.amount} টাকা</div>
+      </div>`;
+    });
+    document.getElementById('customerHistory').innerHTML = html || "<div style='text-align:center; padding:20px;'>কোনো লেনদেন নাই</div>";
   }
 
   window.openSupport = () => {
@@ -232,7 +321,7 @@
     a.href = url; a.download = "smart-khata-backup.json"; a.click();
     alert("ব্যাকআপ ডাউনলোড হয়েছে");
   }
-  
+
   window.taliMessage = () => {
     const dueCustomers = customers.filter(c => c.balance > 0);
     const shopName = document.getElementById('shopName').innerText;
@@ -257,36 +346,14 @@
     if(!name ||!phone) return alert("নাম ও নাম্বার দিন");
     phone = phone.replace('+', '');
     await addDoc(collection(db, "customers"), {userId, name, phone, balance: 0, createdAt: new Date()});
-    document.getElementById('custName').value = ""; 
+    document.getElementById('custName').value = "";
     document.getElementById('custPhone').value = "+88";
     closePopup();
     loadData();
   }
 
-  window.selectType = (type) => {
-    selectedType = type;
-    document.getElementById('btnBaki').classList.remove('active');
-    document.getElementById('btnJoma').classList.remove('active');
-    document.getElementById(type==='baki'?'btnBaki':'btnJoma').classList.add('active');
-  }
-
-  window.confirmTransaction = async () => {
-    const custId = document.getElementById('custSelect').value;
-    const amount = Number(document.getElementById('amount').value);
-    if(custId === "কাস্টমার সিলেক্ট করুন" ||!amount ||!selectedType) return alert("সব তথ্য দিন");
-    const now = new Date();
-    await addDoc(collection(db, "transactions"), {userId, custId, amount, type: selectedType, date: now});
-    const custRef = doc(db, "customers", custId);
-    const custSnap = await getDoc(custRef);
-    let newBalance = custSnap.data().balance;
-    if(selectedType === 'baki') newBalance += amount; else newBalance -= amount;
-    await updateDoc(custRef, {balance: newBalance});
-    document.getElementById('amount').value = ""; selectedType = null;
-    document.getElementById('btnBaki').classList.remove('active'); document.getElementById('btnJoma').classList.remove('active');
-    loadData();
-  }
-
-  window.deleteCustomer = async (custId, custName) => {
+  window.deleteCustomer = async (custId, custName, e) => {
+    e.stopPropagation();
     if(confirm(`আপনি কি "${custName}" কে ডিলেট করতে চান?`)){
       await deleteDoc(doc(db, "customers", custId)); loadData();
     }
@@ -296,19 +363,6 @@
     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
     const filtered = customers.filter(c => c.name.toLowerCase().includes(searchTerm) || c.phone.includes(searchTerm));
     displayCustomers(filtered);
-  }
-
-  window.searchHistory = () => {
-    const searchTerm = document.getElementById('historySearch').value.toLowerCase();
-    if(searchTerm === ""){
-      displayHistory(allTransactions.slice(0,5));
-      return;
-    }
-    const filtered = allTransactions.filter(t => {
-      const cust = customers.find(c => c.id === t.custId);
-      return cust && (cust.name.toLowerCase().includes(searchTerm) || cust.phone.includes(searchTerm));
-    });
-    displayHistory(filtered);
   }
 
   function formatDate(timestamp){
@@ -321,58 +375,39 @@
   }
 
   function formatBDNumber(num) {
-    let phone = num.replace(/\D/g, ''); 
+    let phone = num.replace(/\D/g, '');
     if(phone.startsWith('880')) return phone;
-    if(phone.startsWith('0')) { 
-      return '88' + phone.substring(1);
-    } else if(phone.startsWith('1') && phone.length === 10){ 
-      return '88' + phone;
-    } else { 
-      return '88' + phone;
-    }
+    if(phone.startsWith('0')) { return '88' + phone.substring(1); }
+    else { return '88' + phone; }
   }
 
   function displayCustomers(custList) {
     const list = document.getElementById('customerList'); list.innerHTML = "";
     const shopName = document.getElementById('shopName').innerText;
-    if(custList.length === 0){ 
-      list.innerHTML = "<div style='text-align:center; padding:20px; color:#999;'>কোনো কাস্টমার পাওয়া যায়নি</div>"; 
-      return; 
+    if(custList.length === 0){
+      list.innerHTML = "<div style='text-align:center; padding:20px; color:#999;'>কোনো কাস্টমার পাওয়া যায়নি</div>";
+      return;
     }
 
     custList.forEach(c => {
       let balanceClass = 'balance-clear';
       let balanceText = 'হিসাব ক্লিয়ার';
-      let statusText = 'আপনার হিসাব ক্লিয়ার আছে। ধন্যবাদ';
-
-      if(c.balance > 0){
-        balanceClass = 'balance-due';
-        balanceText = `${c.balance} টাকা বাকি`;
-        statusText = `আপনার কাছে বর্তমান বাকি: ${c.balance} টাকা`;
-      } else if(c.balance < 0){
-        balanceClass = 'balance-credit';
-        balanceText = `${Math.abs(c.balance)} টাকা জমা`;
-        statusText = `আপনার জমা আছে: ${Math.abs(c.balance)} টাকা`;
-      }
+      if(c.balance > 0){ balanceClass = 'balance-due'; balanceText = `${c.balance} টাকা বাকি`; }
+      else if(c.balance < 0){ balanceClass = 'balance-credit'; balanceText = `${Math.abs(c.balance)} টাকা জমা`; }
 
       const formattedPhone = formatBDNumber(c.phone);
-      
-      let message = `আসালামু আলাইকুম ${c.name} ভাই\n`;
-      message += `${shopName} থেকে বলছি\n`;
-      message += `${statusText}\n`;
-      message += `দয়া করে পরিশোধ করে দিয়েন। ধন্যবাদ 🙏`;
-      
+      let message = `আসালামু আলাইকুম ${c.name} ভাই\n${shopName} থেকে বলছি\nদয়া করে পরিশোধ করে দিয়েন। ধন্যবাদ 🙏`;
       const waLink = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
 
       list.innerHTML += `
-        <div class="customer-card">
+        <div class="customer-card" onclick="showCustomerDetail('${c.id}')">
           <div class="customer-left">
             <div class="customer-name">${c.name}</div>
             <div class="customer-phone">${c.phone}</div>
             <div class="icon-group">
-              <a href="tel:${c.phone}" class="icon-btn icon-call"><i class="fa-solid fa-phone"></i></a>
-              <a href="${waLink}" target="_blank" class="icon-btn icon-wa"><i class="fa-brands fa-whatsapp"></i></a>
-              <button onclick="deleteCustomer('${c.id}', '${c.name}')" class="icon-btn icon-delete"><i class="fa-solid fa-trash"></i></button>
+              <a href="tel:${c.phone}" onclick="event.stopPropagation()" class="icon-btn icon-call"><i class="fa-solid fa-phone"></i></a>
+              <a href="${waLink}" target="_blank" onclick="event.stopPropagation()" class="icon-btn icon-wa"><i class="fa-brands fa-whatsapp"></i></a>
+              <button onclick="deleteCustomer('${c.id}', '${c.name}', event)" class="icon-btn icon-delete"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
           <div class="customer-balance ${balanceClass}">${balanceText}</div>
@@ -381,53 +416,20 @@
     });
   }
 
-  function displayHistory(transList) {
-    let historyHTML = "";
-    transList.forEach(t => {
-      const cust = customers.find(c => c.id === t.custId);
-      const typeText = t.type === 'baki'? 'বাকি' : 'জমা';
-      const typeClass = t.type === 'baki'? 'history-baki' : 'history-joma';
-      historyHTML += `
-        <div class="history-item">
-          <div>
-            <b>${cust? cust.name : 'ডিলেট'}</b> - <span class="${typeClass}">${typeText} ${t.amount} টাকা</span><br>
-            <span class="history-date">${formatDate(t.date)}</span>
-          </div>
-        </div>
-      `;
-    });
-    document.getElementById('transactionHistory').innerHTML = historyHTML || "কোনো লেনদেন নাই";
-  }
-
   async function loadData() {
     const custSnap = await getDocs(query(collection(db, "customers"), where("userId", "==", userId)));
-    customers = []; const select = document.getElementById('custSelect');
-    select.innerHTML = "<option>কাস্টমার সিলেক্ট করুন</option>";
-    let totalBaki = 0;
+    customers = []; let totalPabo=0, totalDebo=0;
     custSnap.forEach(docSnap => {
       const c = {id: docSnap.id,...docSnap.data()}; customers.push(c);
-      select.innerHTML += `<option value="${c.id}">${c.name} - ${c.phone}</option>`;
-      if(c.balance > 0) totalBaki += c.balance;
+      if(c.balance > 0) totalPabo += c.balance; else totalDebo += Math.abs(c.balance);
     });
     displayCustomers(customers);
+    document.getElementById('totalPabo').innerText = totalPabo + " টাকা";
+    document.getElementById('totalDebo').innerText = totalDebo + " টাকা";
 
     const transSnap = await getDocs(query(collection(db, "transactions"), where("userId", "==", userId)));
-    let totalJoma = 0; allTransactions = [];
-    transSnap.forEach(docSnap => {
-      const t = {id: docSnap.id,...docSnap.data()};
-      if(t.type === 'joma') totalJoma += t.amount;
-      allTransactions.push(t);
-    });
-
-    allTransactions.sort((a,b) => {
-      const dateA = a.date? (a.date.toDate? a.date.toDate() : new Date(a.date)) : 0;
-      const dateB = b.date? (b.date.toDate? b.date.toDate() : new Date(b.date)) : 0;
-      return dateB - dateA;
-    });
-
-    displayHistory(allTransactions.slice(0,5));
-    document.getElementById('totalBaki').innerText = totalBaki + " টাকা";
-    document.getElementById('totalJoma').innerText = totalJoma + " টাকা";
+    allTransactions = [];
+    transSnap.forEach(docSnap => allTransactions.push({id: docSnap.id,...docSnap.data()}));
   }
 </script>
 
